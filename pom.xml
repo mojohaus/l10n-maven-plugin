@@ -1,0 +1,51 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <parent>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>mojo-sandbox</artifactId>
+        <version>3</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>l10n-maven-plugin</artifactId>
+    <packaging>maven-plugin</packaging>
+    <version>1.0-SNAPSHOT</version>
+    <name>Localization Tools Maven Mojo</name>
+    <description>Allows to do an automated pseudo localization to test the completeness of your project internationalization effort.
+        This technique simulates the process of localizing products by prefixing and suffixing all your I18N-ed messages.
+        For more information on pseudolocalization, see http://developers.sun.com/solaris/articles/i18n/I18N_Testing.html
+        For more general information on localization, see http://java.sun.com/developer/technicalArticles/Intl/ResourceBundles/
+    </description>
+    <developers>
+        <developer>
+            <id>mkleint</id>
+            <name>Milos Kleint</name>
+            <email>mkleint@codehaus.org</email>
+            <organization>Codehaus</organization>
+            <roles>
+                <role>Developer</role>
+            </roles>
+        </developer>
+    </developers>
+    <issueManagement>
+        <system>jira</system>
+        <url>http://jira.codehaus.org/browse/MOJO</url>
+    </issueManagement>
+    
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-plugin-api</artifactId>
+            <version>2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.plexus</groupId>
+            <artifactId>plexus-utils</artifactId>
+            <version>1.4.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-project</artifactId>
+            <version>2.0</version>
+        </dependency>
+    </dependencies>
+</project>
