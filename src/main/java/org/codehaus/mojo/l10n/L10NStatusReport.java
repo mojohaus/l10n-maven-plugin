@@ -212,9 +212,9 @@ public class L10NStatusReport extends AbstractMavenReport {
             startSection(getTitle());
 
             paragraph(getBundle(locale).getString("report.l10n.intro"));
-
-            startTable();
             
+            startTable();
+            tableCaption(getBundle(locale).getString("report.l10n.summary.caption"));
             String defaultLocaleColumnName = getBundle(locale).getString("report.l10n.column.default");
             String pathColumnName = getBundle(locale).getString("report.l10n.column.path");
             String missingFileLabel = getBundle(locale).getString("report.l10n.missingFile");
@@ -325,6 +325,24 @@ public class L10NStatusReport extends AbstractMavenReport {
             sink.tableRow_();
             
             endTable();
+            
+            getSink().paragraph();
+            text(getBundle(locale).getString("report.l10n.legend"));
+            getSink().paragraph_();
+            getSink().list();
+            getSink().listItem();
+            text(getBundle(locale).getString("report.l10n.list1"));
+            getSink().listItem_();
+            getSink().listItem();
+            text(getBundle(locale).getString("report.l10n.list2"));
+            getSink().listItem_();
+            getSink().listItem();
+            text(getBundle(locale).getString("report.l10n.list3"));
+            getSink().listItem_();
+            getSink().list_();
+            getSink().paragraph();
+            text(getBundle(locale).getString("report.l10n.note"));
+            getSink().paragraph_();
 
             endSection();
         }
