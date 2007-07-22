@@ -22,6 +22,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import org.apache.maven.doxia.sink.Sink;
@@ -32,8 +34,11 @@ import org.apache.maven.reporting.AbstractMavenReportRenderer;
 import org.apache.maven.reporting.MavenReportException;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Pattern;
 import org.apache.maven.model.Resource;
 import org.codehaus.plexus.util.DirectoryScanner;
@@ -85,6 +90,37 @@ public class L10NStatusReport extends AbstractMavenReport {
      * @required
      */
     private List resources;
+    
+//TDB    
+//    /**
+//     * A list of exclude patterns to use. By default no files are excluded.
+//     *
+//     * @parameter expression="${maven.l10n.excludes}"
+//     */
+//    private ArrayList excludes;
+//
+//    /**
+//     * A list of include patterns to use. By default all .java files are included.
+//     *
+//     * @parameter expression="${maven.l10n.includes}"
+//     */
+//    private ArrayList includes;
+
+    /**
+     * The projects in the reactor for aggregation report.
+     *
+     * @parameter expression="${reactorProjects}"
+     * @readonly
+     */
+    protected List reactorProjects;
+
+    /**
+     * Whether to build an aggregated report at the root, or build individual reports.
+     *
+     * @parameter expression="${maven.l10n.aggregate}" default-value="false"
+     */
+    protected boolean aggregate;
+    
 
     private static final String[] DEFAULT_INCLUDES = {"**/*.properties"};
 
@@ -111,43 +147,94 @@ public class L10NStatusReport extends AbstractMavenReport {
     protected MavenProject getProject() {
         return project;
     }
+    
+    public boolean canGenerateReport() {
+        return canGenerateReport( constructResourceDirs() );
+    }
+    
+    /**
+     * @param sourceDirs
+     * @return true if the report could be generated
+     */
+    protected boolean canGenerateReport( Map sourceDirs )
+    {
+        boolean canGenerate = !sourceDirs.isEmpty();
+
+        if ( aggregate && !project.isExecutionRoot() )
+        {
+            canGenerate = false;
+        }
+        return canGenerate;
+    }
+    
+    /**
+     * collects resource definitions from all projects in reactor..
+     * @return 
+     */
+    protected Map constructResourceDirs()
+    {
+        Map sourceDirs = new HashMap();
+        if ( aggregate )
+        {
+            for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
+            {
+                MavenProject prj = (MavenProject) i.next();
+                if (prj.getResources() != null && !prj.getResources().isEmpty()) {
+                    sourceDirs.put(prj, new ArrayList(prj.getResources()));
+                }
+
+            }
+        } else {
+            if (resources != null && !resources.isEmpty()) {
+                sourceDirs.put(project, new ArrayList(resources));
+            }
+        }
+        return sourceDirs;
+    }
+    
+    
 
     /**
      * @see org.apache.maven.reporting.AbstractMavenReport#executeReport(java.util.Locale)
      */
     protected void executeReport(Locale locale) throws MavenReportException {
-        List included = new ArrayList();
-        for (Iterator i = resources.iterator(); i.hasNext();) {
-            Resource resource = (Resource) i.next();
+        Set included = new TreeSet(new WrapperComparator());
+        Map res = constructResourceDirs();
+        for (Iterator it = res.keySet().iterator(); it.hasNext();) {
+            MavenProject prj = (MavenProject)it.next();
+            List lst = (List)res.get(prj);
+            for (Iterator i = lst.iterator(); i.hasNext();) {
+                Resource resource = (Resource) i.next();
 
-            File resourceDirectory = new File(resource.getDirectory());
+                File resourceDirectory = new File(resource.getDirectory());
 
-            if (!resourceDirectory.exists()) {
-                getLog().info("Resource directory does not exist: " + resourceDirectory);
-                continue;
-            }
+                if (!resourceDirectory.exists()) {
+                    getLog().info("Resource directory does not exist: " + resourceDirectory);
+                    continue;
+                }
 
-            DirectoryScanner scanner = new DirectoryScanner();
+                DirectoryScanner scanner = new DirectoryScanner();
 
-            scanner.setBasedir(resource.getDirectory());
-            if (resource.getIncludes() != null && !resource.getIncludes().isEmpty()) {
-                scanner.setIncludes((String[]) resource.getIncludes().toArray( EMPTY_STRING_ARRAY ));
-            } else {
-                scanner.setIncludes(DEFAULT_INCLUDES);
-            }
+                scanner.setBasedir(resource.getDirectory());
+                if (resource.getIncludes() != null && !resource.getIncludes().isEmpty()) {
+                    scanner.setIncludes((String[]) resource.getIncludes().toArray( EMPTY_STRING_ARRAY ));
+                } else {
+                    scanner.setIncludes(DEFAULT_INCLUDES);
+                }
 
-            if (resource.getExcludes() != null && !resource.getExcludes().isEmpty()) {
-                scanner.setExcludes((String[]) resource.getExcludes().toArray( EMPTY_STRING_ARRAY ));
-            }
+                if (resource.getExcludes() != null && !resource.getExcludes().isEmpty()) {
+                    scanner.setExcludes((String[]) resource.getExcludes().toArray( EMPTY_STRING_ARRAY ));
+                }
 
-            scanner.addDefaultExcludes();
-            scanner.scan();
+                scanner.addDefaultExcludes();
+                scanner.scan();
 
-            List includedFiles = Arrays.asList(scanner.getIncludedFiles());
-            for (Iterator j = includedFiles.iterator(); j.hasNext();) {
-                String name = (String) j.next();
-                File source = new File(resource.getDirectory(), name);
-                included.add(new Wrapper(name, source));
+                List includedFiles = Arrays.asList(scanner.getIncludedFiles());
+                for (Iterator j = includedFiles.iterator(); j.hasNext();) {
+                    String name = (String) j.next();
+                    File source = new File(resource.getDirectory(), name);
+                    included.add(new Wrapper(name, source, prj));
+                }
             }
         }
 
@@ -188,10 +275,10 @@ public class L10NStatusReport extends AbstractMavenReport {
     class L10NStatusRenderer extends AbstractMavenReportRenderer {
 
         private final Locale locale;
-        private List files;
+        private Set files;
         private Pattern localed_patt = Pattern.compile(".*_[a-zA-Z]{2}[_]?[a-zA-Z]{0,2}?\\.properties");
 
-        public L10NStatusRenderer(Sink sink, Locale locale, List files) {
+        public L10NStatusRenderer(Sink sink, Locale locale, Set files) {
             super(sink);
 
             this.locale = locale;
@@ -238,8 +325,19 @@ public class L10NStatusReport extends AbstractMavenReport {
             int[] count = new int[locales != null ? locales.size() + 1 : 1];
             Arrays.fill(count,0);
             Iterator it = files.iterator();
+            MavenProject lastPrj = null;
             while (it.hasNext()) {
                 Wrapper wr = (Wrapper) it.next();
+                if (reactorProjects.size() > 1 && (lastPrj == null || lastPrj != wr.getProject())) {
+                    lastPrj = wr.getProject();
+                    sink.tableRow();
+                    String name = wr.getProject().getName();
+                    if (name == null) {
+                        name = wr.getProject().getGroupId() + ":" + wr.getProject().getArtifactId();
+                    }
+                    tableCell("<b><i>" + name + "</b></i>", true);
+                    sink.tableRow_();
+                }
                 if (wr.getFile().getName().endsWith(".properties") && !localed_patt.matcher(wr.getFile().getName()).matches()) {
                     sink.tableRow();
                     tableCell(wr.getPath());
@@ -316,9 +414,9 @@ public class L10NStatusReport extends AbstractMavenReport {
             sink.tableRow();
             tableCell(totalLabel);
             for (int i = 0; i < count.length; i++) {
-                if (i != 0) {
+                if (i != 0 && count[0] != 0) {
                     tableCell("<b>" + count[i] + "</b> (" + (count[i] * 100 / count[0]) + " %)", true);
-                } else {
+                } else if (i == 0) {
                     tableCell("<b>" + count[i] + "</b>", true);
                 }
             }
@@ -352,26 +450,40 @@ public class L10NStatusReport extends AbstractMavenReport {
 
         private String path;
         private File file;
+        private MavenProject proj;
 
-        public Wrapper(String p, File f) {
+        public Wrapper(String p, File f, MavenProject prj) {
             path = p;
             file = f;
+            proj = prj;
         }
 
         public File getFile() {
             return file;
         }
 
-        public void setFile(File file) {
-            this.file = file;
-        }
 
         public String getPath() {
             return path;
         }
-
-        public void setPath(String path) {
-            this.path = path;
+        
+        public MavenProject getProject() {
+            return proj;
         }
+
+    }
+    
+    private static class WrapperComparator implements Comparator {
+
+        public int compare(Object o1, Object o2) {
+            Wrapper wr1 = (Wrapper)o1;
+            Wrapper wr2 = (Wrapper)o2;
+            int comp1 = wr1.getProject().getBasedir().compareTo(wr2.getProject().getBasedir());
+            if (comp1 != 0) {
+                return comp1;
+            }
+            return wr1.getFile().compareTo(wr2.getFile());
+        }
+        
     }
 }
