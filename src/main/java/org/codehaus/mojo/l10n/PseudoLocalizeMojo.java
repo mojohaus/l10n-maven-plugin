@@ -95,7 +95,7 @@ public class PseudoLocalizeMojo
      * Pattern is expected to contain this sequence {0} exactly once with a prefix 
      * and/or suffix. 
      * 
-     * @parameter default-value="XXX {0} YYY"
+     * @parameter default-value="XXX 什么 {0} YYY"
      * @required
      */ 
     private String pseudoLocPattern;
