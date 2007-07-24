@@ -93,12 +93,11 @@ public class PseudoLocalizeMojo
      * The plugins iterates all properties in the property files and replaces the 
      * values using {@link java.text.MessageFormat} with this value as formatting pattern. The 
      * Pattern is expected to contain this sequence {0} exactly once with a prefix 
-     * and/or suffix. 
+     * and/or suffix. Default value is "XXX 多少 {0} YYY"
      * 
-     * @parameter default-value="XXX 什么 {0} YYY"
-     * @required
+     * @parameter
      */ 
-    private String pseudoLocPattern;
+    private String pseudoLocPattern = "XXX 多少 {0} YYY";
     
     /**
      * locale name that is used  for pseudo localization.
