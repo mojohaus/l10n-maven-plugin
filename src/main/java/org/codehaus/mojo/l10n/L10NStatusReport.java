@@ -125,7 +125,7 @@ public class L10NStatusReport extends AbstractMavenReport {
     private static final String[] DEFAULT_INCLUDES = {"**/*.properties"};
 
     private static final String[] EMPTY_STRING_ARRAY = {};
-
+    
 
     /**
      * @see org.apache.maven.reporting.AbstractMavenReport#getSiteRenderer()
@@ -166,7 +166,7 @@ public class L10NStatusReport extends AbstractMavenReport {
         }
         return canGenerate;
     }
-    
+
     /**
      * collects resource definitions from all projects in reactor..
      * @return 
@@ -268,7 +268,7 @@ public class L10NStatusReport extends AbstractMavenReport {
         return ResourceBundle.getBundle("l10n-status-report", locale, L10NStatusReport.class.getClassLoader());
     }
 
-/**
+    /**
      * Generates an overview page with the list of goals
      * and a link to the goal's page.
      */
@@ -299,6 +299,7 @@ public class L10NStatusReport extends AbstractMavenReport {
             startSection(getTitle());
 
             paragraph(getBundle(locale).getString("report.l10n.intro"));
+            startSection("Summary:");
             
             startTable();
             tableCaption(getBundle(locale).getString("report.l10n.summary.caption"));
@@ -326,6 +327,7 @@ public class L10NStatusReport extends AbstractMavenReport {
             Arrays.fill(count,0);
             Iterator it = files.iterator();
             MavenProject lastPrj = null;
+            Set usedFiles = new TreeSet(new WrapperComparator());
             while (it.hasNext()) {
                 Wrapper wr = (Wrapper) it.next();
                 if (reactorProjects.size() > 1 && (lastPrj == null || lastPrj != wr.getProject())) {
@@ -339,6 +341,7 @@ public class L10NStatusReport extends AbstractMavenReport {
                     sink.tableRow_();
                 }
                 if (wr.getFile().getName().endsWith(".properties") && !localed_patt.matcher(wr.getFile().getName()).matches()) {
+                    usedFiles.add(wr);
                     sink.tableRow();
                     tableCell(wr.getPath());
                     Properties props = new Properties();
@@ -346,6 +349,7 @@ public class L10NStatusReport extends AbstractMavenReport {
                     try {
                         in = new BufferedInputStream(new FileInputStream(wr.getFile()));
                         props.load(in);
+                        wr.getProperties().put(Wrapper.DEFAULT_LOCALE, props);
                         tableCell("" + props.size(), true);
                         count[0] = count[0] + props.size();
                         if (locales != null) {
@@ -362,6 +366,7 @@ public class L10NStatusReport extends AbstractMavenReport {
                                     try {
                                         in2 = new BufferedInputStream(new FileInputStream(locFile));
                                         props2.load(in2);
+                                        wr.getProperties().put(loc, props2);
                                         HashSet missing = new HashSet(props.keySet());
                                         missing.removeAll(props2.keySet());
                                         HashSet additional = new HashSet(props2.keySet());
@@ -387,12 +392,7 @@ public class L10NStatusReport extends AbstractMavenReport {
                                         if (nonTranslated.size() != 0) {
                                             cell = cell + "<tr><td>" +nontranslatedKeysLabel + "</td><td><b>" + nonTranslated.size() + "</b></td></tr>";
                                         }
-                                        if (cell.length() == 0) {
-                                            cell = okLabel;
-                                        } else {
-                                            cell = "<table><tbody>" + cell + "</tbody></table>";
-                                        }
-                                        tableCell(cell, true);
+                                        tableCell(wrapInTable(okLabel, cell), true);
                                     } finally {
                                         IOUtil.close(in2);
                                     }
@@ -423,7 +423,6 @@ public class L10NStatusReport extends AbstractMavenReport {
             sink.tableRow_();
             
             endTable();
-            
             getSink().paragraph();
             text(getBundle(locale).getString("report.l10n.legend"));
             getSink().paragraph_();
@@ -441,8 +440,87 @@ public class L10NStatusReport extends AbstractMavenReport {
             getSink().paragraph();
             text(getBundle(locale).getString("report.l10n.note"));
             getSink().paragraph_();
-
             endSection();
+
+            if (locales != null) {
+                Iterator itx = locales.iterator();
+                getSink().list();
+                while (itx.hasNext()) {
+                    String x  = (String)itx.next();
+                    getSink().listItem();
+                    link("#" + x, x);
+                    getSink().listItem_();
+                }
+                getSink().list_();
+                
+                itx = locales.iterator();
+                while (itx.hasNext()) {
+                    String x  = (String)itx.next();
+                    getSink().anchor(x);
+                    startSection(x);
+                    startTable();
+                    tableCaption("Locale " + x);
+                    tableHeader(new String[] {"Resource Path", "Missing keys", "Extra keys", "Non-Changed keys"});
+                    Iterator usedIter = usedFiles.iterator();
+                    while (usedIter.hasNext()) {
+                        sink.tableRow();
+                        Wrapper wr = (Wrapper)usedIter.next();
+                        tableCell(wr.getPath());
+                        Properties defs = (Properties) wr.getProperties().get(Wrapper.DEFAULT_LOCALE);
+                        Properties locals = (Properties) wr.getProperties().get(x);
+                        if (locals == null) {
+                            locals = new Properties();
+                        }
+                        HashSet missing = new HashSet(defs.keySet());
+                        missing.removeAll(locals.keySet());
+                        String cell = "";
+                        Iterator ms = missing.iterator();
+                        while (ms.hasNext()) {
+                            cell = cell + "<tr><td>" + ms.next() + "</td></tr>";
+                        }
+                        tableCell(wrapInTable(okLabel, cell), true);
+                        HashSet additional = new HashSet(locals.keySet());
+                        additional.removeAll(defs.keySet());
+                        Iterator ex = additional.iterator();
+                        cell = "";
+                        while (ex.hasNext()) {
+                            cell = cell + "<tr><td>" + ex.next() + "</td></tr>";
+                        }
+                        tableCell(wrapInTable(okLabel, cell), true);
+                        HashSet nonTranslated = new HashSet();
+                        Iterator itnt = defs.keySet().iterator();
+                        while (itnt.hasNext()) {
+                            String k = (String)itnt.next();
+                            String val1 = defs.getProperty(k);
+                            String val2 = locals.getProperty(k);
+                            if (val2 != null && val1.equals(val2)) {
+                                nonTranslated.add(k);
+                            }
+                        }
+                        Iterator nt = nonTranslated.iterator();
+                        cell = "";
+                        while (nt.hasNext()) {
+                            String n = (String)nt.next();
+                            cell = cell + "<tr><td>" + n + "</td><td>\"" + defs.getProperty(n) + "\"</td></tr>";
+                        }
+                        tableCell(wrapInTable(okLabel, cell), true);
+                        
+                        sink.tableRow_();
+                    }
+                    endTable();
+                    endSection();
+                }
+            }
+            endSection();
+        }
+
+        private String wrapInTable(String okLabel, String cell) {
+            if (cell.length() == 0) {
+                cell = okLabel;
+            } else {
+                cell = "<table><tbody>" + cell + "</tbody></table>";
+            }
+            return cell;
         }
     }
 
@@ -451,11 +529,14 @@ public class L10NStatusReport extends AbstractMavenReport {
         private String path;
         private File file;
         private MavenProject proj;
+        private HashMap properties;
+        static final String DEFAULT_LOCALE = "Default";
 
         public Wrapper(String p, File f, MavenProject prj) {
             path = p;
             file = f;
             proj = prj;
+            properties = new HashMap();
         }
 
         public File getFile() {
@@ -469,6 +550,10 @@ public class L10NStatusReport extends AbstractMavenReport {
         
         public MavenProject getProject() {
             return proj;
+        }
+        
+        public HashMap getProperties() {
+            return properties;
         }
 
     }
