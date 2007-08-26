@@ -479,7 +479,7 @@ public class L10NStatusReport extends AbstractMavenReport {
                         if (locals == null) {
                             locals = new Properties();
                         }
-                        HashSet missing = new HashSet(defs.keySet());
+                        TreeSet missing = new TreeSet(defs.keySet());
                         missing.removeAll(locals.keySet());
                         String cell = "";
                         Iterator ms = missing.iterator();
@@ -487,7 +487,7 @@ public class L10NStatusReport extends AbstractMavenReport {
                             cell = cell + "<tr><td>" + ms.next() + "</td></tr>";
                         }
                         tableCell(wrapInTable(okLabel, cell), true);
-                        HashSet additional = new HashSet(locals.keySet());
+                        TreeSet additional = new TreeSet(locals.keySet());
                         additional.removeAll(defs.keySet());
                         Iterator ex = additional.iterator();
                         cell = "";
@@ -495,7 +495,7 @@ public class L10NStatusReport extends AbstractMavenReport {
                             cell = cell + "<tr><td>" + ex.next() + "</td></tr>";
                         }
                         tableCell(wrapInTable(okLabel, cell), true);
-                        HashSet nonTranslated = new HashSet();
+                        TreeSet nonTranslated = new TreeSet();
                         Iterator itnt = defs.keySet().iterator();
                         while (itnt.hasNext()) {
                             String k = (String)itnt.next();
