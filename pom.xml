@@ -15,6 +15,17 @@
         For more information on pseudolocalization, see http://developers.sun.com/solaris/articles/i18n/I18N_Testing.html
         For more general information on localization, see http://java.sun.com/developer/technicalArticles/Intl/ResourceBundles/
     </description>
+    <prerequisites>
+        <maven>2.0.4</maven>
+    </prerequisites>
+    <licenses>
+        <license>
+            <name>Apache License 2</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    
     <developers>
         <developer>
             <id>mkleint</id>
@@ -77,4 +88,16 @@
             </plugin>
         </plugins>
     </build>
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-plugin-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </reporting>
 </project>
