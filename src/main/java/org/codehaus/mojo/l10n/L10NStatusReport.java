@@ -45,9 +45,10 @@ import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.IOUtil;
 
 /**
- * a simple report for keeping track for l10n status. It lists all bunlde properties
- * files, the number of properties in them. For configurable list of locales it also
+ * A simple report for keeping track of l10n status. It lists all bundle properties
+ * files and the number of properties in them. For a configurable list of locales it also
  * tracks the progress of localization.
+ * 
  * @author <a href="mkleint@codehaus.org">Milos Kleint</a>
  * @goal report
  */
@@ -69,7 +70,8 @@ public class L10NStatusReport extends AbstractMavenReport {
     private Renderer siteRenderer;
 
     /**
-     * a list locales strings that are to be watched for l10n status.
+     * A list of locale strings that are to be watched for l10n status.
+     *
      * @parameter
      */
     private List locales;
@@ -269,8 +271,8 @@ public class L10NStatusReport extends AbstractMavenReport {
     }
 
     /**
-     * Generates an overview page with the list of goals
-     * and a link to the goal's page.
+     * Generates an overview page with a list of properties bundles
+     * and a link to each locale's status.
      */
     class L10NStatusRenderer extends AbstractMavenReportRenderer {
 

@@ -35,14 +35,15 @@ import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
- * Allows to do an automated pseudo localization to test the completeness of your project internationalization efford.
+ * Allows to do an automated pseudo localization to test the completeness of your project internationalization effort.
  * This technique simulates the process of localizing products by prefixing and suffixing all your I18N-ed messages.
  * <p/>
  * For more information on pseudolocalization, 
- * see <a href="http://developers.sun.com/solaris/articles/i18n/I18N_Testing.html">I18N Testing Guidelines and Techniques</a>
+ * see <a href="http://developers.sun.com/solaris/articles/i18n/I18N_Testing.html">I18N Testing Guidelines and Techniques</a>.
  * <p/>
  * For more general information on localization, 
- * see <a href="http://java.sun.com/developer/technicalArticles/Intl/ResourceBundles/">Java Internationalization: Localization with ResourceBundles</a>
+ * see <a href="http://java.sun.com/developer/technicalArticles/Intl/ResourceBundles/">Java Internationalization: Localization with ResourceBundles</a>.
+ *
  * @author <a href="mailto:mkleint@codehaus.org">Milos Kleint</a>
  * @goal pseudo
  * @phase process-classes
@@ -60,7 +61,7 @@ public class PseudoLocalizeMojo
     private String outputDirectory;
 
     /**
-     * The input directory into which to copy the resources.
+     * The input directory from which we copy the resources.
      * The plugin scans the build output directory by default, in order to have
      * the complete set of resources that end up in the product.
      *
@@ -71,7 +72,7 @@ public class PseudoLocalizeMojo
 
     /**
      * The list of resources we want to pseudo localize. If not specified,
-     * the default pattern is "**\/*.properties"
+     * the default pattern is "**\/*.properties".
      *
      * @parameter
      */
@@ -90,9 +91,9 @@ public class PseudoLocalizeMojo
 
     /**
      * Pattern for replacement of localized string values.
-     * The plugins iterates all properties in the property files and replaces the 
-     * values using {@link java.text.MessageFormat} with this value as formatting pattern. The 
-     * Pattern is expected to contain this sequence {0} exactly once with a prefix 
+     * The plugin iterates over all properties in the property files and replaces the 
+     * values using {@link java.text.MessageFormat} with this value as a formatting pattern. The 
+     * pattern is expected to contain this sequence {0} exactly once with a prefix 
      * and/or suffix. Default value is "XXX 多少 {0} YYY"
      * 
      * @parameter
@@ -100,9 +101,10 @@ public class PseudoLocalizeMojo
     private String pseudoLocPattern = "XXX 多少 {0} YYY";
     
     /**
-     * locale name that is used  for pseudo localization.
+     * Locale name that is used for pseudo localization.
      * The resulting property files will have the following name:
      * &lt;filename&gt;_&lt;pseudoLocale&gt;.properties
+     * 
      * @parameter default-value="xx"
      * @required
      */ 
