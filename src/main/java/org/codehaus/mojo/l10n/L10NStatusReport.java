@@ -384,17 +384,23 @@ public class L10NStatusReport extends AbstractMavenReport {
                                             }
                                         }
                                         count[i] = count[i] + (props.size() - missing.size() - nonTranslated.size());
-                                        String cell = "";
+                                        StringBuffer statusRows = new StringBuffer();
                                         if (missing.size() != 0) {
-                                            cell = "<tr><td>" + missingKeysLabel + "</td><td><b>" + missing.size() + "</b></td></tr>";
+                                            statusRows.append("<tr><td>" + missingKeysLabel + "</td><td><b>" + missing.size() + "</b></td></tr>");
+                                        }
+                                        else {
+                                            statusRows.append("<tr><td>&nbsp;</td><td>&nbsp;</td></tr>");
                                         }
                                         if (additional.size() != 0) {
-                                            cell = cell + "<tr><td>" +additionalKeysLabel + "</td><td><b>" + additional.size() + "</b></td></tr>";
+                                            statusRows.append("<tr><td>" +additionalKeysLabel + "</td><td><b>" + additional.size() + "</b></td></tr>");
+                                        }
+                                        else {
+                                            statusRows.append("<tr><td>&nbsp;</td><td>&nbsp;</td></tr>");
                                         }
                                         if (nonTranslated.size() != 0) {
-                                            cell = cell + "<tr><td>" +nontranslatedKeysLabel + "</td><td><b>" + nonTranslated.size() + "</b></td></tr>";
+                                            statusRows.append("<tr><td>" +nontranslatedKeysLabel + "</td><td><b>" + nonTranslated.size() + "</b></td></tr>");
                                         }
-                                        tableCell(wrapInTable(okLabel, cell), true);
+                                        tableCell(wrapInTable(okLabel, statusRows.toString()), true);
                                     } finally {
                                         IOUtil.close(in2);
                                     }
@@ -417,7 +423,7 @@ public class L10NStatusReport extends AbstractMavenReport {
             tableCell(totalLabel);
             for (int i = 0; i < count.length; i++) {
                 if (i != 0 && count[0] != 0) {
-                    tableCell("<b>" + count[i] + "</b> (" + (count[i] * 100 / count[0]) + " %)", true);
+                    tableCell("<b>" + count[i] + "</b><br />(" + (count[i] * 100 / count[0]) + "&nbsp;%)", true);
                 } else if (i == 0) {
                     tableCell("<b>" + count[i] + "</b>", true);
                 }
