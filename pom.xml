@@ -13,8 +13,7 @@
     <description>Allows to do an automated pseudo localization to test the completeness of your project internationalization effort.
         This technique simulates the process of localizing products by prefixing and suffixing all your I18N-ed messages.
         For more information on pseudolocalization, see http://developers.sun.com/solaris/articles/i18n/I18N_Testing.html
-        For more general information on localization, see http://java.sun.com/developer/technicalArticles/Intl/ResourceBundles/
-    </description>
+        For more general information on localization, see http://java.sun.com/developer/technicalArticles/Intl/ResourceBundles/</description>
     <prerequisites>
         <maven>2.0.4</maven>
     </prerequisites>
