@@ -1,0 +1,54 @@
+ ------
+ Usage
+ ------
+ Dennis Lundberg
+ ------
+ 2007-09-02
+ ------
+
+
+Usage
+
+*How to Generate the Report
+
+  To generate the localization report, just add the following in your project's
+  <<<pom.xml>>>:
+
+-------------------
+<project>
+  ...
+  <build>
+    ...
+  </build>
+  ...
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>l10n-maven-plugin</artifactId>
+        <version>1.0-SNAPSHOT</version>
+        <configuration>
+          <locales>
+            <locale>de</locale>
+            <locale>es</locale>
+            <locale>fr</locale>
+            ...
+          </locales>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
+  ...
+</project>
+-------------------
+
+  Add a <<<\<locale\>>>> element for every localization you have.
+
+  The report will be generated when you execute the Maven site plugin, like this:
+
+-------------------
+mvn site
+-------------------
+
+  You can refer to the {{{report-mojo.html}generated documentation}} to discover
+  the different configuration options for the report mojo.
