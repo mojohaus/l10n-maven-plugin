@@ -1,5 +1,5 @@
  ------
- Localization Tools Maven Plugin 
+ Introduction
  ------
  Milos Kleint
  <mkleint@codehaus.org>
@@ -23,14 +23,19 @@
  ~~ NOTE: For help with the syntax of this file, see:
  ~~ http://maven.apache.org/guides/mini/guide-apt-format.html
 
-Localization Tools Maven Plugin 
+Localization Tools Maven Plugin
 
- The plugin provides goal that help with internationalization and localizatio nof your projects. 
+ The Localization Tools Maven Plugin helps with internationalization and
+ localization of your projects.
 
- The {{{pseudo-mojo.html} pseudo}} goal performs an automated pseudo-localization of
-all the property resources in the project. That lets you verify the completeness of 
-your internationalization efford.
+* Goals Overview
 
- The {{{report-mojo.html} report}} will track the completeness of your localization 
-for specified locales and display the results in tabular form.
+   The Localization Tools Plugin has two goals:
+
+   * {{{pseudo-mojo.html} l10n:pseudo}} performs an automated pseudo-localization of
+     all the property resources in the project. That lets you verify the completeness of 
+     your internationalization efford.
+
+   * {{{report-mojo.html} l10n:report}} tracks the completeness of your localization 
+     for specified locales and display the results in tabular form.
 
