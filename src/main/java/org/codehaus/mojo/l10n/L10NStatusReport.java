@@ -93,20 +93,19 @@ public class L10NStatusReport extends AbstractMavenReport {
      */
     private List resources;
     
-//TDB    
-//    /**
-//     * A list of exclude patterns to use. By default no files are excluded.
-//     *
-//     * @parameter expression="${maven.l10n.excludes}"
-//     */
-//    private ArrayList excludes;
-//
-//    /**
-//     * A list of include patterns to use. By default all .java files are included.
-//     *
-//     * @parameter expression="${maven.l10n.includes}"
-//     */
-//    private ArrayList includes;
+    /**
+     * A list of exclude patterns to use. By default no files are excluded.
+     *
+     * @parameter expression="${maven.l10n.excludes}"
+     */
+    private ArrayList excludes;
+
+    /**
+     * A list of include patterns to use. By default all .java files are included.
+     *
+     * @parameter expression="${maven.l10n.includes}"
+     */
+    private ArrayList includes;
 
     /**
      * The projects in the reactor for aggregation report.
@@ -218,15 +217,28 @@ public class L10NStatusReport extends AbstractMavenReport {
                 DirectoryScanner scanner = new DirectoryScanner();
 
                 scanner.setBasedir(resource.getDirectory());
+                List allIncludes = new ArrayList();
                 if (resource.getIncludes() != null && !resource.getIncludes().isEmpty()) {
-                    scanner.setIncludes((String[]) resource.getIncludes().toArray( EMPTY_STRING_ARRAY ));
-                } else {
-                    scanner.setIncludes(DEFAULT_INCLUDES);
+                    allIncludes.addAll(resource.getIncludes());
+                }
+                if (includes != null && !includes.isEmpty()) {
+                    allIncludes.addAll(includes);
                 }
 
-                if (resource.getExcludes() != null && !resource.getExcludes().isEmpty()) {
-                    scanner.setExcludes((String[]) resource.getExcludes().toArray( EMPTY_STRING_ARRAY ));
+                if (allIncludes.isEmpty()) {
+                    scanner.setIncludes(DEFAULT_INCLUDES);
+                } else {
+                    scanner.setIncludes((String[]) allIncludes.toArray(EMPTY_STRING_ARRAY));
                 }
+
+                List allExcludes = new ArrayList();
+                if (resource.getExcludes() != null && !resource.getExcludes().isEmpty()) {
+                    allExcludes.addAll(resource.getExcludes());
+                } else if (excludes != null && !excludes.isEmpty()) {
+                    allExcludes.addAll(excludes);
+                }
+
+                scanner.setExcludes((String[]) allExcludes.toArray( EMPTY_STRING_ARRAY ));
 
                 scanner.addDefaultExcludes();
                 scanner.scan();
