@@ -26,8 +26,8 @@ under the License.
   <modelVersion>4.0.0</modelVersion>
   <artifactId>l10n-maven-plugin</artifactId>
   <packaging>maven-plugin</packaging>
-  <version>1.0-SNAPSHOT</version>
   <name>Localization Tools Maven Mojo</name>
+  <version>1.0-SNAPSHOT</version>
   <description>
     Allows to do an automated pseudo localization to test the completeness of your project internationalization effort.
     This technique simulates the process of localizing products by prefixing and suffixing all your I18N-ed messages.
@@ -38,15 +38,13 @@ under the License.
   <prerequisites>
     <maven>2.0.4</maven>
   </prerequisites>
-  <inceptionYear>2007</inceptionYear>
-  <licenses>
-    <license>
-      <name>Apache License 2</name>
-      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-      <distribution>repo</distribution>
-    </license>
-  </licenses>
 
+  <issueManagement>
+    <system>JIRA</system>
+    <url>http://jira.codehaus.org/browse/MOJO</url>
+  </issueManagement>
+
+  <inceptionYear>2007</inceptionYear>
   <developers>
     <developer>
       <id>mkleint</id>
@@ -58,16 +56,39 @@ under the License.
       </roles>
     </developer>
   </developers>
-  <issueManagement>
-    <system>jira</system>
-    <url>http://jira.codehaus.org/browse/MOJO</url>
-  </issueManagement>
+
+  <licenses>
+    <license>
+      <name>Apache License 2</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
 
   <scm>
     <connection>scm:svn:http://svn.codehaus.org/mojo/trunk/sandbox/l10n-maven-plugin/</connection>
     <developerConnection>scm:svn:https://svn.codehaus.org/mojo/trunk/sandbox/l10n-maven-plugin/</developerConnection>
     <url>http://svn.codehaus.org/mojo/trunk/sandbox/l10n-maven-plugin/</url>
   </scm>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>RELEASE</version>
+        <configuration>
+          <encoding>UTF-8</encoding>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>RELEASE</version>
+        <configuration>
+          <encoding>UTF-8</encoding>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 
   <dependencies>
     <dependency>
@@ -97,24 +118,6 @@ under the License.
     </dependency>
   </dependencies>
 
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>RELEASE</version>
-        <configuration>
-          <encoding>UTF-8</encoding>
-        </configuration>
-      </plugin>
-      <plugin>
-        <artifactId>maven-resources-plugin</artifactId>
-        <version>RELEASE</version>
-        <configuration>
-          <encoding>UTF-8</encoding>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
   <reporting>
     <plugins>
       <plugin>
