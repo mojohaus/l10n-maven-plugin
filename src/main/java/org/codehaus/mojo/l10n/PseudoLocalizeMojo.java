@@ -16,12 +16,14 @@ package org.codehaus.mojo.l10n;
  * limitations under the License.
  */
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.codehaus.plexus.util.DirectoryScanner;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.StringUtils;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -31,18 +33,20 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
-import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.StringUtils;
 
 /**
- * Allows you to do an automated pseudo-localization to test the completeness of your project's internationalization effort.
- * This technique simulates the process of localizing products by prefixing and suffixing all your I18N-ed messages.
+ * Allows you to do an automated pseudo-localization to test the completeness
+ * of your project's internationalization effort. This technique simulates the
+ * process of localizing products by prefixing and suffixing all your
+ * internationalized messages.
  * <p/>
- * For more information on pseudo-localization, 
- * see <a href="http://developers.sun.com/solaris/articles/i18n/I18N_Testing.html">I18N Testing Guidelines and Techniques</a>.
+ * For more information on pseudo-localization, see
+ * <a href="http://developers.sun.com/solaris/articles/i18n/I18N_Testing.html">
+ * I18N Testing Guidelines and Techniques</a>.
  * <p/>
- * For more general information on localization, 
- * see <a href="http://java.sun.com/developer/technicalArticles/Intl/ResourceBundles/">Java Internationalization: Localization with ResourceBundles</a>.
+ * For more general information on localization, see
+ * <a href="http://java.sun.com/developer/technicalArticles/Intl/ResourceBundles/">
+ * Java Internationalization: Localization with ResourceBundles</a>.
  *
  * @author <a href="mailto:mkleint@codehaus.org">Milos Kleint</a>
  * @goal pseudo
@@ -51,7 +55,7 @@ import org.codehaus.plexus.util.StringUtils;
 public class PseudoLocalizeMojo
     extends AbstractMojo
 {
-        
+
     /**
      * The output directory into which to copy the resources.
      *
@@ -91,132 +95,142 @@ public class PseudoLocalizeMojo
 
     /**
      * Pattern for replacement of localized string values.
-     * The plugin iterates over all properties in the property files and replaces the 
-     * values using {@link java.text.MessageFormat} with this value as a formatting pattern. The 
-     * pattern is expected to contain this sequence {0} exactly once with a prefix 
+     * The plugin iterates over all properties in the property files and replaces the
+     * values using {@link java.text.MessageFormat} with this value as a formatting pattern. The
+     * pattern is expected to contain this sequence {0} exactly once with a prefix
      * and/or suffix. Default value is "XXX 多少 {0} YYY".
-     * 
+     *
      * @parameter
-     */ 
+     */
     private String pseudoLocPattern = "XXX 多少 {0} YYY";
-    
+
     /**
      * Locale name that is used for pseudo-localization.
      * The resulting property files will have the following name:
      * &lt;filename&gt;_&lt;pseudoLocale&gt;.properties.
-     * 
+     *
      * @parameter default-value="xx"
      * @required
-     */ 
-     private String pseudoLocale;
+     */
+    private String pseudoLocale;
 
     public void execute()
         throws MojoExecutionException
     {
-        if (pseudoLocPattern.indexOf("{0}") == -1) {
-            throw new MojoExecutionException("The pseudoLocPattern parameter with value '" + pseudoLocPattern + "' is misconfigured.");
+        if ( pseudoLocPattern.indexOf( "{0}" ) == -1 )
+        {
+            throw new MojoExecutionException(
+                "The pseudoLocPattern parameter with value '" + pseudoLocPattern + "' is misconfigured." );
         }
-        generatePseudoLoc(outputDirectory );
+        generatePseudoLoc( outputDirectory );
     }
 
     protected void generatePseudoLoc( String outputDirectory )
         throws MojoExecutionException
     {
-            File resourceDirectory = new File( inputDirectory );
+        File resourceDirectory = new File( inputDirectory );
 
-            if ( !resourceDirectory.exists() )
+        if ( !resourceDirectory.exists() )
+        {
+            getLog().info( "Resource directory does not exist: " + resourceDirectory );
+            return;
+        }
+
+        // this part is required in case the user specified "../something" as destination
+        // see MNG-1345
+        File outputDir = new File( outputDirectory );
+        if ( !outputDir.exists() )
+        {
+            if ( !outputDir.mkdirs() )
             {
-                getLog().info( "Resource directory does not exist: " + resourceDirectory );
-                return;
+                throw new MojoExecutionException( "Cannot create resource output directory: " + outputDir );
             }
+        }
 
-            // this part is required in case the user specified "../something" as destination
-            // see MNG-1345
-            File outputDir = new File( outputDirectory );
-            if ( !outputDir.exists() )
+        DirectoryScanner scanner = new DirectoryScanner();
+
+        scanner.setBasedir( resourceDirectory );
+        if ( includes != null && !includes.isEmpty() )
+        {
+            scanner.setIncludes( (String[]) includes.toArray( EMPTY_STRING_ARRAY ) );
+        }
+        else
+        {
+            scanner.setIncludes( DEFAULT_INCLUDES );
+        }
+
+        if ( excludes != null && !excludes.isEmpty() )
+        {
+            scanner.setExcludes( (String[]) excludes.toArray( EMPTY_STRING_ARRAY ) );
+        }
+
+        scanner.addDefaultExcludes();
+        scanner.scan();
+
+        List includedFiles = Arrays.asList( scanner.getIncludedFiles() );
+
+        for ( Iterator j = includedFiles.iterator(); j.hasNext(); )
+        {
+            String name = (String) j.next();
+
+            File source = new File( inputDirectory, name );
+            File dest = new File( outputDirectory, name );
+
+            String fileName = "";
+            String[] split = StringUtils.split( source.getName(), "." );
+            for ( int i = 0; i < split.length - 1; i++ )
             {
-                if ( !outputDir.mkdirs() )
+                if ( i == split.length - 2 )
                 {
-                    throw new MojoExecutionException( "Cannot create resource output directory: " + outputDir );
+                    fileName = fileName + split[i] + "_" + pseudoLocale + ".";
                 }
-            }
-
-            DirectoryScanner scanner = new DirectoryScanner();
-
-            scanner.setBasedir( resourceDirectory );
-            if ( includes != null && !includes.isEmpty() )
-            {
-                scanner.setIncludes( (String[]) includes.toArray( EMPTY_STRING_ARRAY ) );
-            }
-            else
-            {
-                scanner.setIncludes( DEFAULT_INCLUDES );
-            }
-
-            if ( excludes != null && !excludes.isEmpty() )
-            {
-                scanner.setExcludes( (String[]) excludes.toArray( EMPTY_STRING_ARRAY ) );
-            }
-
-            scanner.addDefaultExcludes();
-            scanner.scan();
-
-            List includedFiles = Arrays.asList( scanner.getIncludedFiles() );
-
-            for ( Iterator j = includedFiles.iterator(); j.hasNext(); )
-            {
-                String name = (String) j.next();
-
-                File source = new File( inputDirectory, name );
-                File dest = new File( outputDirectory, name );
-                
-                String fileName = "";
-                String[] split = StringUtils.split(source.getName(), ".");
-                for (int i = 0; i < split.length - 1; i++) {
-                    if (i == split.length - 2) {
-                        fileName = fileName + split[i] + "_" + pseudoLocale + ".";
-                    } else {
-                        fileName = fileName + split[i] + ".";
-                    }
-                }
-                fileName = fileName + split[split.length - 1];
-                File destinationFile = new File( dest.getParentFile(), fileName );
-                
-                getLog().info("Pseudo-localizing " + name + " bundle file.");
-
-                try
+                else
                 {
-                    copyFile( source, destinationFile);
-                }
-                catch ( IOException e )
-                {
-                    throw new MojoExecutionException( "Error copying resource " + source, e );
+                    fileName = fileName + split[i] + ".";
                 }
             }
+            fileName = fileName + split[split.length - 1];
+            File destinationFile = new File( dest.getParentFile(), fileName );
+
+            getLog().info( "Pseudo-localizing " + name + " bundle file." );
+
+            try
+            {
+                copyFile( source, destinationFile );
+            }
+            catch ( IOException e )
+            {
+                throw new MojoExecutionException( "Error copying resource " + source, e );
+            }
+        }
     }
 
-    private void copyFile( File from, final File to)
+    private void copyFile( File from, final File to )
         throws IOException
     {
         Properties props = new Properties();
         BufferedInputStream in = null;
         BufferedOutputStream out = null;
         to.getParentFile().mkdirs();
-        try {
-            in = new BufferedInputStream(new FileInputStream(from));
-            props.load(in);
+        try
+        {
+            in = new BufferedInputStream( new FileInputStream( from ) );
+            props.load( in );
             Iterator it = props.keySet().iterator();
-            while (it.hasNext()) {
-                String key = (String)it.next();
-                String val = props.getProperty(key);
-                String newVal = MessageFormat.format(pseudoLocPattern, new String[] {val});
-                props.setProperty(key, newVal);
+            while ( it.hasNext() )
+            {
+                String key = (String) it.next();
+                String val = props.getProperty( key );
+                String newVal = MessageFormat.format( pseudoLocPattern, new String[]{val} );
+                props.setProperty( key, newVal );
             }
-            out = new BufferedOutputStream(new FileOutputStream(to));
-            props.store(out,"Pseudo Localized bundle file for I18N testing autogenerated by the l10n-maven-plugin.");
-        } finally {
-            IOUtil.close(in);
-            IOUtil.close(out);
+            out = new BufferedOutputStream( new FileOutputStream( to ) );
+            props.store( out, "Pseudo Localized bundle file for I18N testing autogenerated by the l10n-maven-plugin." );
+        }
+        finally
+        {
+            IOUtil.close( in );
+            IOUtil.close( out );
         }
     }
 }

@@ -16,6 +16,16 @@ package org.codehaus.mojo.l10n;
  * limitations under the License.
  */
 
+import org.apache.maven.doxia.sink.Sink;
+import org.apache.maven.doxia.siterenderer.Renderer;
+import org.apache.maven.model.Resource;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.reporting.AbstractMavenReport;
+import org.apache.maven.reporting.AbstractMavenReportRenderer;
+import org.apache.maven.reporting.MavenReportException;
+import org.codehaus.plexus.util.DirectoryScanner;
+import org.codehaus.plexus.util.IOUtil;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,12 +36,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import org.apache.maven.doxia.sink.Sink;
-import org.apache.maven.doxia.siterenderer.Renderer;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.reporting.AbstractMavenReport;
-import org.apache.maven.reporting.AbstractMavenReportRenderer;
-import org.apache.maven.reporting.MavenReportException;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -40,19 +44,18 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
-import org.apache.maven.model.Resource;
-import org.codehaus.plexus.util.DirectoryScanner;
-import org.codehaus.plexus.util.IOUtil;
 
 /**
  * A simple report for keeping track of l10n status. It lists all bundle properties
  * files and the number of properties in them. For a configurable list of locales it also
  * tracks the progress of localization.
- * 
+ *
  * @author <a href="mkleint@codehaus.org">Milos Kleint</a>
  * @goal report
  */
-public class L10NStatusReport extends AbstractMavenReport {
+public class L10NStatusReport
+    extends AbstractMavenReport
+{
 
     /**
      * Report output directory.
@@ -92,7 +95,7 @@ public class L10NStatusReport extends AbstractMavenReport {
      * @required
      */
     private List resources;
-    
+
     /**
      * A list of exclude patterns to use. By default no files are excluded.
      *
@@ -121,38 +124,42 @@ public class L10NStatusReport extends AbstractMavenReport {
      * @parameter expression="${maven.l10n.aggregate}" default-value="false"
      */
     protected boolean aggregate;
-    
+
 
     private static final String[] DEFAULT_INCLUDES = {"**/*.properties"};
 
     private static final String[] EMPTY_STRING_ARRAY = {};
-    
+
 
     /**
      * @see org.apache.maven.reporting.AbstractMavenReport#getSiteRenderer()
      */
-    protected Renderer getSiteRenderer() {
+    protected Renderer getSiteRenderer()
+    {
         return siteRenderer;
     }
 
     /**
      * @see org.apache.maven.reporting.AbstractMavenReport#getOutputDirectory()
      */
-    protected String getOutputDirectory() {
+    protected String getOutputDirectory()
+    {
         return outputDirectory;
     }
 
     /**
      * @see org.apache.maven.reporting.AbstractMavenReport#getProject()
      */
-    protected MavenProject getProject() {
+    protected MavenProject getProject()
+    {
         return project;
     }
-    
-    public boolean canGenerateReport() {
+
+    public boolean canGenerateReport()
+    {
         return canGenerateReport( constructResourceDirs() );
     }
-    
+
     /**
      * @param sourceDirs
      * @return true if the report can be generated
@@ -171,7 +178,7 @@ public class L10NStatusReport extends AbstractMavenReport {
     /**
      * Collects resource definitions from all projects in reactor.
      *
-     * @return 
+     * @return
      */
     protected Map constructResourceDirs()
     {
@@ -181,120 +188,146 @@ public class L10NStatusReport extends AbstractMavenReport {
             for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
             {
                 MavenProject prj = (MavenProject) i.next();
-                if (prj.getResources() != null && !prj.getResources().isEmpty()) {
-                    sourceDirs.put(prj, new ArrayList(prj.getResources()));
+                if ( prj.getResources() != null && !prj.getResources().isEmpty() )
+                {
+                    sourceDirs.put( prj, new ArrayList( prj.getResources() ) );
                 }
 
             }
-        } else {
-            if (resources != null && !resources.isEmpty()) {
-                sourceDirs.put(project, new ArrayList(resources));
+        }
+        else
+        {
+            if ( resources != null && !resources.isEmpty() )
+            {
+                sourceDirs.put( project, new ArrayList( resources ) );
             }
         }
         return sourceDirs;
     }
-    
-    
+
 
     /**
      * @see org.apache.maven.reporting.AbstractMavenReport#executeReport(java.util.Locale)
      */
-    protected void executeReport(Locale locale) throws MavenReportException {
-        Set included = new TreeSet(new WrapperComparator());
+    protected void executeReport( Locale locale )
+        throws MavenReportException
+    {
+        Set included = new TreeSet( new WrapperComparator() );
         Map res = constructResourceDirs();
-        for (Iterator it = res.keySet().iterator(); it.hasNext();) {
-            MavenProject prj = (MavenProject)it.next();
-            List lst = (List)res.get(prj);
-            for (Iterator i = lst.iterator(); i.hasNext();) {
+        for ( Iterator it = res.keySet().iterator(); it.hasNext(); )
+        {
+            MavenProject prj = (MavenProject) it.next();
+            List lst = (List) res.get( prj );
+            for ( Iterator i = lst.iterator(); i.hasNext(); )
+            {
                 Resource resource = (Resource) i.next();
 
-                File resourceDirectory = new File(resource.getDirectory());
+                File resourceDirectory = new File( resource.getDirectory() );
 
-                if (!resourceDirectory.exists()) {
-                    getLog().info("Resource directory does not exist: " + resourceDirectory);
+                if ( !resourceDirectory.exists() )
+                {
+                    getLog().info( "Resource directory does not exist: " + resourceDirectory );
                     continue;
                 }
 
                 DirectoryScanner scanner = new DirectoryScanner();
 
-                scanner.setBasedir(resource.getDirectory());
+                scanner.setBasedir( resource.getDirectory() );
                 List allIncludes = new ArrayList();
-                if (resource.getIncludes() != null && !resource.getIncludes().isEmpty()) {
-                    allIncludes.addAll(resource.getIncludes());
+                if ( resource.getIncludes() != null && !resource.getIncludes().isEmpty() )
+                {
+                    allIncludes.addAll( resource.getIncludes() );
                 }
-                if (includes != null && !includes.isEmpty()) {
-                    allIncludes.addAll(includes);
+                if ( includes != null && !includes.isEmpty() )
+                {
+                    allIncludes.addAll( includes );
                 }
 
-                if (allIncludes.isEmpty()) {
-                    scanner.setIncludes(DEFAULT_INCLUDES);
-                } else {
-                    scanner.setIncludes((String[]) allIncludes.toArray(EMPTY_STRING_ARRAY));
+                if ( allIncludes.isEmpty() )
+                {
+                    scanner.setIncludes( DEFAULT_INCLUDES );
+                }
+                else
+                {
+                    scanner.setIncludes( (String[]) allIncludes.toArray( EMPTY_STRING_ARRAY ) );
                 }
 
                 List allExcludes = new ArrayList();
-                if (resource.getExcludes() != null && !resource.getExcludes().isEmpty()) {
-                    allExcludes.addAll(resource.getExcludes());
-                } else if (excludes != null && !excludes.isEmpty()) {
-                    allExcludes.addAll(excludes);
+                if ( resource.getExcludes() != null && !resource.getExcludes().isEmpty() )
+                {
+                    allExcludes.addAll( resource.getExcludes() );
+                }
+                else if ( excludes != null && !excludes.isEmpty() )
+                {
+                    allExcludes.addAll( excludes );
                 }
 
-                scanner.setExcludes((String[]) allExcludes.toArray( EMPTY_STRING_ARRAY ));
+                scanner.setExcludes( (String[]) allExcludes.toArray( EMPTY_STRING_ARRAY ) );
 
                 scanner.addDefaultExcludes();
                 scanner.scan();
 
-                List includedFiles = Arrays.asList(scanner.getIncludedFiles());
-                for (Iterator j = includedFiles.iterator(); j.hasNext();) {
+                List includedFiles = Arrays.asList( scanner.getIncludedFiles() );
+                for ( Iterator j = includedFiles.iterator(); j.hasNext(); )
+                {
                     String name = (String) j.next();
-                    File source = new File(resource.getDirectory(), name);
-                    included.add(new Wrapper(name, source, prj));
+                    File source = new File( resource.getDirectory(), name );
+                    included.add( new Wrapper( name, source, prj ) );
                 }
             }
         }
 
         // Write the overview
-        L10NStatusRenderer r = new L10NStatusRenderer(getSink(), locale, included);
+        L10NStatusRenderer r = new L10NStatusRenderer( getSink(), locale, included );
         r.render();
     }
 
     /**
      * @see org.apache.maven.reporting.MavenReport#getDescription(java.util.Locale)
      */
-    public String getDescription(Locale locale) {
-        return getBundle(locale).getString("report.l10n.description");
+    public String getDescription( Locale locale )
+    {
+        return getBundle( locale ).getString( "report.l10n.description" );
     }
 
     /**
      * @see org.apache.maven.reporting.MavenReport#getName(java.util.Locale)
      */
-    public String getName(Locale locale) {
-        return getBundle(locale).getString("report.l10n.name");
+    public String getName( Locale locale )
+    {
+        return getBundle( locale ).getString( "report.l10n.name" );
     }
 
     /**
      * @see org.apache.maven.reporting.MavenReport#getOutputName()
      */
-    public String getOutputName() {
+    public String getOutputName()
+    {
         return "l10n-status";
     }
 
-    private static ResourceBundle getBundle(Locale locale) {
-        return ResourceBundle.getBundle("l10n-status-report", locale, L10NStatusReport.class.getClassLoader());
+    private static ResourceBundle getBundle( Locale locale )
+    {
+        return ResourceBundle.getBundle( "l10n-status-report", locale, L10NStatusReport.class.getClassLoader() );
     }
 
     /**
      * Generates an overview page with a list of properties bundles
      * and a link to each locale's status.
      */
-    class L10NStatusRenderer extends AbstractMavenReportRenderer {
+    class L10NStatusRenderer
+        extends AbstractMavenReportRenderer
+    {
 
         private final Locale locale;
-        private Set files;
-        private Pattern localed_patt = Pattern.compile(".*_[a-zA-Z]{2}[_]?[a-zA-Z]{0,2}?\\.properties");
 
-        public L10NStatusRenderer(Sink sink, Locale locale, Set files) {
-            super(sink);
+        private Set files;
+
+        private Pattern localedPattern = Pattern.compile( ".*_[a-zA-Z]{2}[_]?[a-zA-Z]{0,2}?\\.properties" );
+
+        public L10NStatusRenderer( Sink sink, Locale locale, Set files )
+        {
+            super( sink );
 
             this.locale = locale;
             this.files = files;
@@ -303,229 +336,275 @@ public class L10NStatusReport extends AbstractMavenReport {
         /**
          * @see org.apache.maven.reporting.MavenReportRenderer#getTitle()
          */
-        public String getTitle() {
-            return getBundle(locale).getString("report.l10n.title");
+        public String getTitle()
+        {
+            return getBundle( locale ).getString( "report.l10n.title" );
         }
 
         /**
          * @see org.apache.maven.reporting.AbstractMavenReportRenderer#renderBody()
          */
-        public void renderBody() {
-            startSection(getTitle());
+        public void renderBody()
+        {
+            startSection( getTitle() );
 
-            paragraph(getBundle(locale).getString("report.l10n.intro"));
-            startSection("Summary:");
-            
+            paragraph( getBundle( locale ).getString( "report.l10n.intro" ) );
+            startSection( "Summary:" );
+
             startTable();
-            tableCaption(getBundle(locale).getString("report.l10n.summary.caption"));
-            String defaultLocaleColumnName = getBundle(locale).getString("report.l10n.column.default");
-            String pathColumnName = getBundle(locale).getString("report.l10n.column.path");
-            String missingFileLabel = getBundle(locale).getString("report.l10n.missingFile");
-            String missingKeysLabel = getBundle(locale).getString("report.l10n.missingKey");
-            String okLabel = getBundle(locale).getString("report.l10n.ok");
-            String totalLabel = getBundle(locale).getString("report.l10n.total");
-            String additionalKeysLabel = getBundle(locale).getString("report.l10n.additional");
-            String nontranslatedKeysLabel = getBundle(locale).getString("report.l10n.nontranslated");
+            tableCaption( getBundle( locale ).getString( "report.l10n.summary.caption" ) );
+            String defaultLocaleColumnName = getBundle( locale ).getString( "report.l10n.column.default" );
+            String pathColumnName = getBundle( locale ).getString( "report.l10n.column.path" );
+            String missingFileLabel = getBundle( locale ).getString( "report.l10n.missingFile" );
+            String missingKeysLabel = getBundle( locale ).getString( "report.l10n.missingKey" );
+            String okLabel = getBundle( locale ).getString( "report.l10n.ok" );
+            String totalLabel = getBundle( locale ).getString( "report.l10n.total" );
+            String additionalKeysLabel = getBundle( locale ).getString( "report.l10n.additional" );
+            String nontranslatedKeysLabel = getBundle( locale ).getString( "report.l10n.nontranslated" );
             String[] headers = new String[locales != null ? locales.size() + 2 : 2];
             headers[0] = pathColumnName;
             headers[1] = defaultLocaleColumnName;
-            if (locales != null) {
+            if ( locales != null )
+            {
                 Iterator it = locales.iterator();
                 int ind = 2;
-                while (it.hasNext()) {
-                    headers[ind] = (String)it.next();
+                while ( it.hasNext() )
+                {
+                    headers[ind] = (String) it.next();
                     ind = ind + 1;
                 }
             }
-            tableHeader(headers);
+            tableHeader( headers );
             int[] count = new int[locales != null ? locales.size() + 1 : 1];
-            Arrays.fill(count,0);
+            Arrays.fill( count, 0 );
             Iterator it = files.iterator();
             MavenProject lastPrj = null;
-            Set usedFiles = new TreeSet(new WrapperComparator());
-            while (it.hasNext()) {
+            Set usedFiles = new TreeSet( new WrapperComparator() );
+            while ( it.hasNext() )
+            {
                 Wrapper wr = (Wrapper) it.next();
-                if (reactorProjects.size() > 1 && (lastPrj == null || lastPrj != wr.getProject())) {
+                if ( reactorProjects.size() > 1 && ( lastPrj == null || lastPrj != wr.getProject() ) )
+                {
                     lastPrj = wr.getProject();
                     sink.tableRow();
                     String name = wr.getProject().getName();
-                    if (name == null) {
+                    if ( name == null )
+                    {
                         name = wr.getProject().getGroupId() + ":" + wr.getProject().getArtifactId();
                     }
-                    tableCell("<b><i>" + name + "</b></i>", true);
+                    tableCell( "<b><i>" + name + "</b></i>", true );
                     sink.tableRow_();
                 }
-                if (wr.getFile().getName().endsWith(".properties") && !localed_patt.matcher(wr.getFile().getName()).matches()) {
-                    usedFiles.add(wr);
+                if ( wr.getFile().getName().endsWith( ".properties" )
+                    && !localedPattern.matcher( wr.getFile().getName() ).matches() )
+                {
+                    usedFiles.add( wr );
                     sink.tableRow();
-                    tableCell(wr.getPath());
+                    tableCell( wr.getPath() );
                     Properties props = new Properties();
                     BufferedInputStream in = null;
-                    try {
-                        in = new BufferedInputStream(new FileInputStream(wr.getFile()));
-                        props.load(in);
-                        wr.getProperties().put(Wrapper.DEFAULT_LOCALE, props);
-                        tableCell("" + props.size(), true);
+                    try
+                    {
+                        in = new BufferedInputStream( new FileInputStream( wr.getFile() ) );
+                        props.load( in );
+                        wr.getProperties().put( Wrapper.DEFAULT_LOCALE, props );
+                        tableCell( "" + props.size(), true );
                         count[0] = count[0] + props.size();
-                        if (locales != null) {
+                        if ( locales != null )
+                        {
                             Iterator it2 = locales.iterator();
                             int i = 1;
-                            while (it2.hasNext()) {
-                                String loc = (String)it2.next();
+                            while ( it2.hasNext() )
+                            {
+                                String loc = (String) it2.next();
                                 String nm = wr.getFile().getName();
-                                String fn = nm.substring(0, nm.length() - ".properties".length());
-                                File locFile = new File(wr.getFile().getParentFile(), fn + "_" + loc + ".properties");
-                                if (locFile.exists()) {
+                                String fn = nm.substring( 0, nm.length() - ".properties".length() );
+                                File locFile = new File( wr.getFile().getParentFile(), fn + "_" + loc + ".properties" );
+                                if ( locFile.exists() )
+                                {
                                     BufferedInputStream in2 = null;
                                     Properties props2 = new Properties();
-                                    try {
-                                        in2 = new BufferedInputStream(new FileInputStream(locFile));
-                                        props2.load(in2);
-                                        wr.getProperties().put(loc, props2);
-                                        HashSet missing = new HashSet(props.keySet());
-                                        missing.removeAll(props2.keySet());
-                                        HashSet additional = new HashSet(props2.keySet());
-                                        additional.removeAll(props.keySet());
+                                    try
+                                    {
+                                        in2 = new BufferedInputStream( new FileInputStream( locFile ) );
+                                        props2.load( in2 );
+                                        wr.getProperties().put( loc, props2 );
+                                        HashSet missing = new HashSet( props.keySet() );
+                                        missing.removeAll( props2.keySet() );
+                                        HashSet additional = new HashSet( props2.keySet() );
+                                        additional.removeAll( props.keySet() );
                                         HashSet nonTranslated = new HashSet();
                                         Iterator itx = props.keySet().iterator();
-                                        while (itx.hasNext()) {
-                                            String k = (String)itx.next();
-                                            String val1 = props.getProperty(k);
-                                            String val2 = props2.getProperty(k);
-                                            if (val2 != null && val1.equals(val2)) {
-                                                nonTranslated.add(k);
+                                        while ( itx.hasNext() )
+                                        {
+                                            String k = (String) itx.next();
+                                            String val1 = props.getProperty( k );
+                                            String val2 = props2.getProperty( k );
+                                            if ( val2 != null && val1.equals( val2 ) )
+                                            {
+                                                nonTranslated.add( k );
                                             }
                                         }
-                                        count[i] = count[i] + (props.size() - missing.size() - nonTranslated.size());
+                                        count[i] = count[i] + ( props.size() - missing.size() - nonTranslated.size() );
                                         StringBuffer statusRows = new StringBuffer();
-                                        if (missing.size() != 0) {
-                                            statusRows.append("<tr><td>" + missingKeysLabel + "</td><td><b>" + missing.size() + "</b></td></tr>");
+                                        if ( missing.size() != 0 )
+                                        {
+                                            statusRows.append( "<tr><td>" + missingKeysLabel + "</td><td><b>"
+                                                + missing.size() + "</b></td></tr>" );
                                         }
-                                        else {
-                                            statusRows.append("<tr><td>&nbsp;</td><td>&nbsp;</td></tr>");
+                                        else
+                                        {
+                                            statusRows.append( "<tr><td>&nbsp;</td><td>&nbsp;</td></tr>" );
                                         }
-                                        if (additional.size() != 0) {
-                                            statusRows.append("<tr><td>" +additionalKeysLabel + "</td><td><b>" + additional.size() + "</b></td></tr>");
+                                        if ( additional.size() != 0 )
+                                        {
+                                            statusRows.append( "<tr><td>" + additionalKeysLabel + "</td><td><b>"
+                                                + additional.size() + "</b></td></tr>" );
                                         }
-                                        else {
-                                            statusRows.append("<tr><td>&nbsp;</td><td>&nbsp;</td></tr>");
+                                        else
+                                        {
+                                            statusRows.append( "<tr><td>&nbsp;</td><td>&nbsp;</td></tr>" );
                                         }
-                                        if (nonTranslated.size() != 0) {
-                                            statusRows.append("<tr><td>" +nontranslatedKeysLabel + "</td><td><b>" + nonTranslated.size() + "</b></td></tr>");
+                                        if ( nonTranslated.size() != 0 )
+                                        {
+                                            statusRows.append( "<tr><td>" + nontranslatedKeysLabel + "</td><td><b>"
+                                                + nonTranslated.size() + "</b></td></tr>" );
                                         }
-                                        tableCell(wrapInTable(okLabel, statusRows.toString()), true);
-                                    } finally {
-                                        IOUtil.close(in2);
+                                        tableCell( wrapInTable( okLabel, statusRows.toString() ), true );
                                     }
-                                } else {
-                                    tableCell(missingFileLabel);
+                                    finally
+                                    {
+                                        IOUtil.close( in2 );
+                                    }
+                                }
+                                else
+                                {
+                                    tableCell( missingFileLabel );
                                     count[i] = count[i] + 0;
                                 }
                                 i = i + 1;
                             }
                         }
-                    } catch (IOException ex) {
-                        getLog().error(ex);
-                    } finally {
-                        IOUtil.close(in);
+                    }
+                    catch ( IOException ex )
+                    {
+                        getLog().error( ex );
+                    }
+                    finally
+                    {
+                        IOUtil.close( in );
                     }
                     sink.tableRow_();
                 }
             }
             sink.tableRow();
-            tableCell(totalLabel);
-            for (int i = 0; i < count.length; i++) {
-                if (i != 0 && count[0] != 0) {
-                    tableCell("<b>" + count[i] + "</b><br />(" + (count[i] * 100 / count[0]) + "&nbsp;%)", true);
-                } else if (i == 0) {
-                    tableCell("<b>" + count[i] + "</b>", true);
+            tableCell( totalLabel );
+            for ( int i = 0; i < count.length; i++ )
+            {
+                if ( i != 0 && count[0] != 0 )
+                {
+                    tableCell( "<b>" + count[i] + "</b><br />(" + ( count[i] * 100 / count[0] ) + "&nbsp;%)", true );
+                }
+                else if ( i == 0 )
+                {
+                    tableCell( "<b>" + count[i] + "</b>", true );
                 }
             }
             sink.tableRow_();
-            
+
             endTable();
             getSink().paragraph();
-            text(getBundle(locale).getString("report.l10n.legend"));
+            text( getBundle( locale ).getString( "report.l10n.legend" ) );
             getSink().paragraph_();
             getSink().list();
             getSink().listItem();
-            text(getBundle(locale).getString("report.l10n.list1"));
+            text( getBundle( locale ).getString( "report.l10n.list1" ) );
             getSink().listItem_();
             getSink().listItem();
-            text(getBundle(locale).getString("report.l10n.list2"));
+            text( getBundle( locale ).getString( "report.l10n.list2" ) );
             getSink().listItem_();
             getSink().listItem();
-            text(getBundle(locale).getString("report.l10n.list3"));
+            text( getBundle( locale ).getString( "report.l10n.list3" ) );
             getSink().listItem_();
             getSink().list_();
             getSink().paragraph();
-            text(getBundle(locale).getString("report.l10n.note"));
+            text( getBundle( locale ).getString( "report.l10n.note" ) );
             getSink().paragraph_();
             endSection();
 
-            if (locales != null) {
+            if ( locales != null )
+            {
                 Iterator itx = locales.iterator();
                 getSink().list();
-                while (itx.hasNext()) {
-                    String x  = (String)itx.next();
+                while ( itx.hasNext() )
+                {
+                    String x = (String) itx.next();
                     getSink().listItem();
-                    link("#" + x, x);
+                    link( "#" + x, x );
                     getSink().listItem_();
                 }
                 getSink().list_();
-                
+
                 itx = locales.iterator();
-                while (itx.hasNext()) {
-                    String x  = (String)itx.next();
-                    getSink().anchor(x);
-                    startSection(x);
+                while ( itx.hasNext() )
+                {
+                    String x = (String) itx.next();
+                    getSink().anchor( x );
+                    startSection( x );
                     startTable();
-                    tableCaption("Locale " + x);
-                    tableHeader(new String[] {"Resource Path", "Missing keys", "Extra keys", "Non-Changed keys"});
+                    tableCaption( "Locale " + x );
+                    tableHeader( new String[]{"Resource Path", "Missing keys", "Extra keys", "Non-Changed keys"} );
                     Iterator usedIter = usedFiles.iterator();
-                    while (usedIter.hasNext()) {
+                    while ( usedIter.hasNext() )
+                    {
                         sink.tableRow();
-                        Wrapper wr = (Wrapper)usedIter.next();
-                        tableCell(wr.getPath());
-                        Properties defs = (Properties) wr.getProperties().get(Wrapper.DEFAULT_LOCALE);
-                        Properties locals = (Properties) wr.getProperties().get(x);
-                        if (locals == null) {
+                        Wrapper wr = (Wrapper) usedIter.next();
+                        tableCell( wr.getPath() );
+                        Properties defs = (Properties) wr.getProperties().get( Wrapper.DEFAULT_LOCALE );
+                        Properties locals = (Properties) wr.getProperties().get( x );
+                        if ( locals == null )
+                        {
                             locals = new Properties();
                         }
-                        TreeSet missing = new TreeSet(defs.keySet());
-                        missing.removeAll(locals.keySet());
+                        TreeSet missing = new TreeSet( defs.keySet() );
+                        missing.removeAll( locals.keySet() );
                         String cell = "";
                         Iterator ms = missing.iterator();
-                        while (ms.hasNext()) {
+                        while ( ms.hasNext() )
+                        {
                             cell = cell + "<tr><td>" + ms.next() + "</td></tr>";
                         }
-                        tableCell(wrapInTable(okLabel, cell), true);
-                        TreeSet additional = new TreeSet(locals.keySet());
-                        additional.removeAll(defs.keySet());
+                        tableCell( wrapInTable( okLabel, cell ), true );
+                        TreeSet additional = new TreeSet( locals.keySet() );
+                        additional.removeAll( defs.keySet() );
                         Iterator ex = additional.iterator();
                         cell = "";
-                        while (ex.hasNext()) {
+                        while ( ex.hasNext() )
+                        {
                             cell = cell + "<tr><td>" + ex.next() + "</td></tr>";
                         }
-                        tableCell(wrapInTable(okLabel, cell), true);
+                        tableCell( wrapInTable( okLabel, cell ), true );
                         TreeSet nonTranslated = new TreeSet();
                         Iterator itnt = defs.keySet().iterator();
-                        while (itnt.hasNext()) {
-                            String k = (String)itnt.next();
-                            String val1 = defs.getProperty(k);
-                            String val2 = locals.getProperty(k);
-                            if (val2 != null && val1.equals(val2)) {
-                                nonTranslated.add(k);
+                        while ( itnt.hasNext() )
+                        {
+                            String k = (String) itnt.next();
+                            String val1 = defs.getProperty( k );
+                            String val2 = locals.getProperty( k );
+                            if ( val2 != null && val1.equals( val2 ) )
+                            {
+                                nonTranslated.add( k );
                             }
                         }
                         Iterator nt = nonTranslated.iterator();
                         cell = "";
-                        while (nt.hasNext()) {
-                            String n = (String)nt.next();
-                            cell = cell + "<tr><td>" + n + "</td><td>\"" + defs.getProperty(n) + "\"</td></tr>";
+                        while ( nt.hasNext() )
+                        {
+                            String n = (String) nt.next();
+                            cell = cell + "<tr><td>" + n + "</td><td>\"" + defs.getProperty( n ) + "\"</td></tr>";
                         }
-                        tableCell(wrapInTable(okLabel, cell), true);
-                        
+                        tableCell( wrapInTable( okLabel, cell ), true );
+
                         sink.tableRow_();
                     }
                     endTable();
@@ -535,61 +614,79 @@ public class L10NStatusReport extends AbstractMavenReport {
             endSection();
         }
 
-        private String wrapInTable(String okLabel, String cell) {
-            if (cell.length() == 0) {
+        private String wrapInTable( String okLabel, String cell )
+        {
+            if ( cell.length() == 0 )
+            {
                 cell = okLabel;
-            } else {
+            }
+            else
+            {
                 cell = "<table><tbody>" + cell + "</tbody></table>";
             }
             return cell;
         }
     }
 
-    private static class Wrapper {
+    private static class Wrapper
+    {
 
         private String path;
+
         private File file;
+
         private MavenProject proj;
+
         private HashMap properties;
+
         static final String DEFAULT_LOCALE = "Default";
 
-        public Wrapper(String p, File f, MavenProject prj) {
+        public Wrapper( String p, File f, MavenProject prj )
+        {
             path = p;
             file = f;
             proj = prj;
             properties = new HashMap();
         }
 
-        public File getFile() {
+        public File getFile()
+        {
             return file;
         }
 
 
-        public String getPath() {
+        public String getPath()
+        {
             return path;
         }
-        
-        public MavenProject getProject() {
+
+        public MavenProject getProject()
+        {
             return proj;
         }
-        
-        public HashMap getProperties() {
+
+        public HashMap getProperties()
+        {
             return properties;
         }
 
     }
-    
-    private static class WrapperComparator implements Comparator {
 
-        public int compare(Object o1, Object o2) {
-            Wrapper wr1 = (Wrapper)o1;
-            Wrapper wr2 = (Wrapper)o2;
-            int comp1 = wr1.getProject().getBasedir().compareTo(wr2.getProject().getBasedir());
-            if (comp1 != 0) {
+    private static class WrapperComparator
+        implements Comparator
+    {
+
+        public int compare( Object o1, Object o2 )
+        {
+            Wrapper wr1 = (Wrapper) o1;
+            Wrapper wr2 = (Wrapper) o2;
+            int comp1 = wr1.getProject().getBasedir().compareTo( wr2.getProject().getBasedir() );
+            if ( comp1 != 0 )
+            {
                 return comp1;
             }
-            return wr1.getFile().compareTo(wr2.getFile());
+            return wr1.getFile().compareTo( wr2.getFile() );
         }
-        
+
     }
 }
