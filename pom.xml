@@ -10,10 +10,12 @@
     <packaging>maven-plugin</packaging>
     <version>1.0-SNAPSHOT</version>
     <name>Localization Tools Maven Mojo</name>
-    <description>Allows to do an automated pseudo localization to test the completeness of your project internationalization effort.
+    <description>
+        Allows to do an automated pseudo localization to test the completeness of your project internationalization effort.
         This technique simulates the process of localizing products by prefixing and suffixing all your I18N-ed messages.
         For more information on pseudolocalization, see http://developers.sun.com/solaris/articles/i18n/I18N_Testing.html
-        For more general information on localization, see http://java.sun.com/developer/technicalArticles/Intl/ResourceBundles/</description>
+        For more general information on localization, see http://java.sun.com/developer/technicalArticles/Intl/ResourceBundles/
+    </description>
     <prerequisites>
         <maven>2.0.4</maven>
     </prerequisites>
@@ -41,7 +43,13 @@
         <system>jira</system>
         <url>http://jira.codehaus.org/browse/MOJO</url>
     </issueManagement>
-    
+
+    <scm>
+        <connection>scm:svn:http://svn.codehaus.org/mojo/trunk/sandbox/l10n-maven-plugin/</connection>
+        <developerConnection>scm:svn:https://svn.codehaus.org/mojo/trunk/sandbox/l10n-maven-plugin/</developerConnection>
+        <url>http://svn.codehaus.org/mojo/trunk/sandbox/l10n-maven-plugin/</url>
+    </scm>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.maven</groupId>
@@ -67,7 +75,7 @@
             <groupId>org.apache.maven.reporting</groupId>
             <artifactId>maven-reporting-impl</artifactId>
             <version>2.0.4</version>
-        </dependency>        
+        </dependency>
     </dependencies>
     
     <build>
@@ -93,6 +101,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>2.0.1</version>
             </plugin>
         </plugins>
     </reporting>
