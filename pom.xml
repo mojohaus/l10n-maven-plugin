@@ -140,6 +140,18 @@ under the License.
         <artifactId>maven-project-info-reports-plugin</artifactId>
         <version>2.0.1</version>
       </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>l10n-maven-plugin</artifactId>
+        <version>${project.version}</version>
+<!--
+        <configuration>
+          <locales>
+            <locale>de</locale>
+          </locales>
+        </configuration>
+-->
+      </plugin>
     </plugins>
   </reporting>
 </project>

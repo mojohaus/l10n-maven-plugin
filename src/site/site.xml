@@ -25,6 +25,9 @@ under the License.
       <item name="Usage" href="usage.html"/>
       <item name="Javadoc" href="apidocs/index.html"/>
     </menu>
+    <menu name="Samples">
+      <item name="Sample l10n Report" href="l10n-status.html"/>
+    </menu>
   </body>
 </project>
 
