@@ -555,8 +555,11 @@ public class L10NStatusReport
                     getSink().anchor( x );
                     startSection( x );
                     startTable();
-                    tableCaption( "Locale " + x );
-                    tableHeader( new String[]{"Resource Path", "Missing keys", "Extra keys", "Non-Changed keys"} );
+                    tableCaption( getBundle( locale ).getString( "report.l10n.locale" ) + " " + x );
+                    tableHeader( new String[]{ getBundle( locale ).getString( "report.l10n.tableheader1" ),
+                                               getBundle( locale ).getString( "report.l10n.tableheader2" ),
+                                               getBundle( locale ).getString( "report.l10n.tableheader3" ),
+                                               getBundle( locale ).getString( "report.l10n.tableheader4" ) } );
                     Iterator usedIter = usedFiles.iterator();
                     while ( usedIter.hasNext() )
                     {
