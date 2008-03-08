@@ -155,7 +155,7 @@ public class L10NStatusReport extends AbstractMavenReport {
     
     /**
      * @param sourceDirs
-     * @return true if the report could be generated
+     * @return true if the report can be generated
      */
     protected boolean canGenerateReport( Map sourceDirs )
     {
@@ -169,7 +169,8 @@ public class L10NStatusReport extends AbstractMavenReport {
     }
 
     /**
-     * collects resource definitions from all projects in reactor..
+     * Collects resource definitions from all projects in reactor.
+     *
      * @return 
      */
     protected Map constructResourceDirs()

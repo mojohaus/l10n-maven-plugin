@@ -34,8 +34,8 @@ Localization Tools Maven Plugin
 
    * {{{pseudo-mojo.html} l10n:pseudo}} performs an automated pseudo-localization of
      all the property resources in the project. That lets you verify the completeness of 
-     your internationalization efford.
+     your internationalization effort.
 
    * {{{report-mojo.html} l10n:report}} tracks the completeness of your localization 
-     for specified locales and display the results in tabular form.
+     for specified locales and displays the results in tabular form.
 

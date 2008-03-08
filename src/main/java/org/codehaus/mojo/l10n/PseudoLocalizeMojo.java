@@ -35,10 +35,10 @@ import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
- * Allows to do an automated pseudo localization to test the completeness of your project internationalization effort.
+ * Allows you to do an automated pseudo-localization to test the completeness of your project's internationalization effort.
  * This technique simulates the process of localizing products by prefixing and suffixing all your I18N-ed messages.
  * <p/>
- * For more information on pseudolocalization, 
+ * For more information on pseudo-localization, 
  * see <a href="http://developers.sun.com/solaris/articles/i18n/I18N_Testing.html">I18N Testing Guidelines and Techniques</a>.
  * <p/>
  * For more general information on localization, 
@@ -71,15 +71,15 @@ public class PseudoLocalizeMojo
     private String inputDirectory;
 
     /**
-     * The list of resources we want to pseudo localize. If not specified,
-     * the default pattern is "**\/*.properties".
+     * The list of resources we want to pseudo-localize. If not specified,
+     * the default pattern is "**&#47;*.properties".
      *
      * @parameter
      */
     private List includes;
 
     /**
-     * The list of resources we don't want to pseudo localize.
+     * The list of resources we don't want to pseudo-localize.
      *
      * @parameter
      */
@@ -94,16 +94,16 @@ public class PseudoLocalizeMojo
      * The plugin iterates over all properties in the property files and replaces the 
      * values using {@link java.text.MessageFormat} with this value as a formatting pattern. The 
      * pattern is expected to contain this sequence {0} exactly once with a prefix 
-     * and/or suffix. Default value is "XXX 多少 {0} YYY"
+     * and/or suffix. Default value is "XXX 多少 {0} YYY".
      * 
      * @parameter
      */ 
     private String pseudoLocPattern = "XXX 多少 {0} YYY";
     
     /**
-     * Locale name that is used for pseudo localization.
+     * Locale name that is used for pseudo-localization.
      * The resulting property files will have the following name:
-     * &lt;filename&gt;_&lt;pseudoLocale&gt;.properties
+     * &lt;filename&gt;_&lt;pseudoLocale&gt;.properties.
      * 
      * @parameter default-value="xx"
      * @required
