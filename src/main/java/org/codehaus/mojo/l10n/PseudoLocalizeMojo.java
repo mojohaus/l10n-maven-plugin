@@ -65,7 +65,7 @@ public class PseudoLocalizeMojo
      * @parameter expression="${project.build.outputDirectory}"
      * @required
      */
-    private String outputDirectory;
+    private File outputDirectory;
 
     /**
      * The input directory from which we copy the resources.
@@ -75,7 +75,7 @@ public class PseudoLocalizeMojo
      * @parameter expression="${project.build.outputDirectory}"
      * @required
      */
-    private String inputDirectory;
+    private File inputDirectory;
 
     /**
      * The list of resources we want to pseudo-localize. If not specified,
@@ -125,34 +125,31 @@ public class PseudoLocalizeMojo
             throw new MojoExecutionException(
                 "The pseudoLocPattern parameter with value '" + pseudoLocPattern + "' is misconfigured." );
         }
-        generatePseudoLoc( outputDirectory );
+        generatePseudoLoc();
     }
 
-    protected void generatePseudoLoc( String outputDirectory )
+    protected void generatePseudoLoc()
         throws MojoExecutionException
     {
-        File resourceDirectory = new File( inputDirectory );
-
-        if ( !resourceDirectory.exists() )
+        if ( !inputDirectory.exists() )
         {
-            getLog().info( "Resource directory does not exist: " + resourceDirectory );
+            getLog().info( "Resource input directory does not exist: " + inputDirectory );
             return;
         }
 
         // this part is required in case the user specified "../something" as destination
         // see MNG-1345
-        File outputDir = new File( outputDirectory );
-        if ( !outputDir.exists() )
+        if ( !outputDirectory.exists() )
         {
-            if ( !outputDir.mkdirs() )
+            if ( !outputDirectory.mkdirs() )
             {
-                throw new MojoExecutionException( "Cannot create resource output directory: " + outputDir );
+                throw new MojoExecutionException( "Cannot create resource output directory: " + outputDirectory );
             }
         }
 
         DirectoryScanner scanner = new DirectoryScanner();
 
-        scanner.setBasedir( resourceDirectory );
+        scanner.setBasedir( inputDirectory );
         if ( includes != null && !includes.isEmpty() )
         {
             scanner.setIncludes( (String[]) includes.toArray( EMPTY_STRING_ARRAY ) );

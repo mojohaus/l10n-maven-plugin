@@ -66,7 +66,7 @@ public class L10NStatusReport
      * @parameter expression="${project.build.directory}/generated-site/xdoc"
      * @required
      */
-    private String outputDirectory;
+    private File outputDirectory;
 
     /**
      * Doxia Site Renderer.
@@ -147,7 +147,7 @@ public class L10NStatusReport
      */
     protected String getOutputDirectory()
     {
-        return outputDirectory;
+        return outputDirectory.getAbsolutePath();
     }
 
     /**
