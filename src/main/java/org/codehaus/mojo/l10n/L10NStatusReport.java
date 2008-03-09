@@ -63,8 +63,7 @@ public class L10NStatusReport
     /**
      * Report output directory.
      *
-     * @parameter expression="${project.build.directory}/generated-site/xdoc"
-     * @required
+     * @parameter default-value="${project.build.directory}/generated-site/xdoc"
      */
     private File outputDirectory;
 
@@ -94,8 +93,7 @@ public class L10NStatusReport
     /**
      * The list of resources that are scanned for properties bundles.
      *
-     * @parameter expression="${project.build.resources}"
-     * @required
+     * @parameter default-value="${project.build.resources}"
      */
     private List resources;
 
@@ -107,7 +105,7 @@ public class L10NStatusReport
     private List excludes;
 
     /**
-     * A list of include patterns to use. By default all .java files are included.
+     * A list of include patterns to use. By default all <code>*.properties</code> files are included.
      *
      * @parameter
      */

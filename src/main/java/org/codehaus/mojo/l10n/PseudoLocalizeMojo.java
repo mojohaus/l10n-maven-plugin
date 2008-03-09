@@ -62,8 +62,7 @@ public class PseudoLocalizeMojo
     /**
      * The output directory into which to copy the resources.
      *
-     * @parameter expression="${project.build.outputDirectory}"
-     * @required
+     * @parameter default-value="${project.build.outputDirectory}"
      */
     private File outputDirectory;
 
@@ -72,21 +71,20 @@ public class PseudoLocalizeMojo
      * The plugin scans the build output directory by default, in order to have
      * the complete set of resources that end up in the product.
      *
-     * @parameter expression="${project.build.outputDirectory}"
-     * @required
+     * @parameter default-value="${project.build.outputDirectory}"
      */
     private File inputDirectory;
 
     /**
      * The list of resources we want to pseudo-localize. If not specified,
-     * the default pattern is "**&#47;*.properties".
+     * the default pattern is <code>**&#47;*.properties</code>.
      *
      * @parameter
      */
     private List includes;
 
     /**
-     * The list of resources we don't want to pseudo-localize.
+     * The list of resources we don't want to pseudo-localize. By default, no files are excluded.
      *
      * @parameter
      */
@@ -100,20 +98,19 @@ public class PseudoLocalizeMojo
      * Pattern for replacement of localized string values.
      * The plugin iterates over all properties in the property files and replaces the
      * values using {@link java.text.MessageFormat} with this value as a formatting pattern. The
-     * pattern is expected to contain this sequence {0} exactly once with a prefix
-     * and/or suffix. Default value is "XXX 多少 {0} YYY".
+     * pattern is expected to contain this sequence <code>{0}</code> exactly once with a prefix
+     * and/or suffix.
      *
-     * @parameter
+     * @parameter default-value="XXX 多少 {0} YYY"
      */
-    private String pseudoLocPattern = "XXX 多少 {0} YYY";
+    private String pseudoLocPattern;
 
     /**
      * Locale name that is used for pseudo-localization.
      * The resulting property files will have the following name:
-     * &lt;filename&gt;_&lt;pseudoLocale&gt;.properties.
+     * <code>&lt;filename&gt;_&lt;pseudoLocale&gt;.properties</code>.
      *
      * @parameter default-value="xx"
-     * @required
      */
     private String pseudoLocale;
 
