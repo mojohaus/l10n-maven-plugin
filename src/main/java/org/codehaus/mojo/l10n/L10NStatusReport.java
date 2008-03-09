@@ -352,7 +352,7 @@ public class L10NStatusReport
             startSection( getTitle() );
 
             paragraph( getBundle( locale ).getString( "report.l10n.intro" ) );
-            startSection( "Summary:" );
+            startSection( getBundle( locale ).getString( "report.l10n.summary" ) );
 
             startTable();
             tableCaption( getBundle( locale ).getString( "report.l10n.summary.caption" ) );
