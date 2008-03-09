@@ -281,7 +281,7 @@ public class L10NStatusReport
         }
 
         // Write the overview
-        L10NStatusRenderer r = new L10NStatusRenderer( getSink(), locale, included );
+        L10NStatusRenderer r = new L10NStatusRenderer( getSink(), getBundle( locale ), included );
         r.render();
     }
 
@@ -322,17 +322,17 @@ public class L10NStatusReport
         extends AbstractMavenReportRenderer
     {
 
-        private final Locale locale;
+        private final ResourceBundle bundle;
 
         private Set files;
 
         private Pattern localedPattern = Pattern.compile( ".*_[a-zA-Z]{2}[_]?[a-zA-Z]{0,2}?\\.properties" );
 
-        public L10NStatusRenderer( Sink sink, Locale locale, Set files )
+        public L10NStatusRenderer( Sink sink, ResourceBundle bundle, Set files )
         {
             super( sink );
 
-            this.locale = locale;
+            this.bundle = bundle;
             this.files = files;
         }
 
@@ -341,7 +341,7 @@ public class L10NStatusReport
          */
         public String getTitle()
         {
-            return getBundle( locale ).getString( "report.l10n.title" );
+            return bundle.getString( "report.l10n.title" );
         }
 
         /**
@@ -351,19 +351,19 @@ public class L10NStatusReport
         {
             startSection( getTitle() );
 
-            paragraph( getBundle( locale ).getString( "report.l10n.intro" ) );
-            startSection( getBundle( locale ).getString( "report.l10n.summary" ) );
+            paragraph( bundle.getString( "report.l10n.intro" ) );
+            startSection( bundle.getString( "report.l10n.summary" ) );
 
             startTable();
-            tableCaption( getBundle( locale ).getString( "report.l10n.summary.caption" ) );
-            String defaultLocaleColumnName = getBundle( locale ).getString( "report.l10n.column.default" );
-            String pathColumnName = getBundle( locale ).getString( "report.l10n.column.path" );
-            String missingFileLabel = getBundle( locale ).getString( "report.l10n.missingFile" );
-            String missingKeysLabel = getBundle( locale ).getString( "report.l10n.missingKey" );
-            String okLabel = getBundle( locale ).getString( "report.l10n.ok" );
-            String totalLabel = getBundle( locale ).getString( "report.l10n.total" );
-            String additionalKeysLabel = getBundle( locale ).getString( "report.l10n.additional" );
-            String nontranslatedKeysLabel = getBundle( locale ).getString( "report.l10n.nontranslated" );
+            tableCaption( bundle.getString( "report.l10n.summary.caption" ) );
+            String defaultLocaleColumnName = bundle.getString( "report.l10n.column.default" );
+            String pathColumnName = bundle.getString( "report.l10n.column.path" );
+            String missingFileLabel = bundle.getString( "report.l10n.missingFile" );
+            String missingKeysLabel = bundle.getString( "report.l10n.missingKey" );
+            String okLabel = bundle.getString( "report.l10n.ok" );
+            String totalLabel = bundle.getString( "report.l10n.total" );
+            String additionalKeysLabel = bundle.getString( "report.l10n.additional" );
+            String nontranslatedKeysLabel = bundle.getString( "report.l10n.nontranslated" );
             String[] headers = new String[locales != null ? locales.size() + 2 : 2];
             headers[0] = pathColumnName;
             headers[1] = defaultLocaleColumnName;
@@ -517,21 +517,21 @@ public class L10NStatusReport
 
             endTable();
             getSink().paragraph();
-            text( getBundle( locale ).getString( "report.l10n.legend" ) );
+            text( bundle.getString( "report.l10n.legend" ) );
             getSink().paragraph_();
             getSink().list();
             getSink().listItem();
-            text( getBundle( locale ).getString( "report.l10n.list1" ) );
+            text( bundle.getString( "report.l10n.list1" ) );
             getSink().listItem_();
             getSink().listItem();
-            text( getBundle( locale ).getString( "report.l10n.list2" ) );
+            text( bundle.getString( "report.l10n.list2" ) );
             getSink().listItem_();
             getSink().listItem();
-            text( getBundle( locale ).getString( "report.l10n.list3" ) );
+            text( bundle.getString( "report.l10n.list3" ) );
             getSink().listItem_();
             getSink().list_();
             getSink().paragraph();
-            text( getBundle( locale ).getString( "report.l10n.note" ) );
+            text( bundle.getString( "report.l10n.note" ) );
             getSink().paragraph_();
             endSection();
 
@@ -555,11 +555,11 @@ public class L10NStatusReport
                     getSink().anchor( x );
                     startSection( x );
                     startTable();
-                    tableCaption( getBundle( locale ).getString( "report.l10n.locale" ) + " " + x );
-                    tableHeader( new String[]{ getBundle( locale ).getString( "report.l10n.tableheader1" ),
-                                               getBundle( locale ).getString( "report.l10n.tableheader2" ),
-                                               getBundle( locale ).getString( "report.l10n.tableheader3" ),
-                                               getBundle( locale ).getString( "report.l10n.tableheader4" ) } );
+                    tableCaption( bundle.getString( "report.l10n.locale" ) + " " + x );
+                    tableHeader( new String[]{ bundle.getString( "report.l10n.tableheader1" ),
+                                               bundle.getString( "report.l10n.tableheader2" ),
+                                               bundle.getString( "report.l10n.tableheader3" ),
+                                               bundle.getString( "report.l10n.tableheader4" ) } );
                     Iterator usedIter = usedFiles.iterator();
                     while ( usedIter.hasNext() )
                     {
