@@ -94,7 +94,7 @@ public class L10NStatusReport
     /**
      * The list of resources that are scanned for properties bundles.
      *
-     * @parameter expression="${project.resources}"
+     * @parameter expression="${project.build.resources}"
      * @required
      */
     private List resources;
@@ -102,16 +102,16 @@ public class L10NStatusReport
     /**
      * A list of exclude patterns to use. By default no files are excluded.
      *
-     * @parameter expression="${maven.l10n.excludes}"
+     * @parameter
      */
-    private ArrayList excludes;
+    private List excludes;
 
     /**
      * A list of include patterns to use. By default all .java files are included.
      *
-     * @parameter expression="${maven.l10n.includes}"
+     * @parameter
      */
-    private ArrayList includes;
+    private List includes;
 
     /**
      * The projects in the reactor for aggregation report.
@@ -432,11 +432,11 @@ public class L10NStatusReport
                                         in2 = new BufferedInputStream( new FileInputStream( locFile ) );
                                         props2.load( in2 );
                                         wr.getProperties().put( loc, props2 );
-                                        HashSet missing = new HashSet( props.keySet() );
+                                        Set missing = new HashSet( props.keySet() );
                                         missing.removeAll( props2.keySet() );
-                                        HashSet additional = new HashSet( props2.keySet() );
+                                        Set additional = new HashSet( props2.keySet() );
                                         additional.removeAll( props.keySet() );
-                                        HashSet nonTranslated = new HashSet();
+                                        Set nonTranslated = new HashSet();
                                         Iterator itx = props.keySet().iterator();
                                         while ( itx.hasNext() )
                                         {
@@ -572,7 +572,7 @@ public class L10NStatusReport
                         {
                             locals = new Properties();
                         }
-                        TreeSet missing = new TreeSet( defs.keySet() );
+                        Set missing = new TreeSet( defs.keySet() );
                         missing.removeAll( locals.keySet() );
                         String cell = "";
                         Iterator ms = missing.iterator();
@@ -581,7 +581,7 @@ public class L10NStatusReport
                             cell = cell + "<tr><td>" + ms.next() + "</td></tr>";
                         }
                         tableCell( wrapInTable( okLabel, cell ), true );
-                        TreeSet additional = new TreeSet( locals.keySet() );
+                        Set additional = new TreeSet( locals.keySet() );
                         additional.removeAll( defs.keySet() );
                         Iterator ex = additional.iterator();
                         cell = "";
@@ -590,7 +590,7 @@ public class L10NStatusReport
                             cell = cell + "<tr><td>" + ex.next() + "</td></tr>";
                         }
                         tableCell( wrapInTable( okLabel, cell ), true );
-                        TreeSet nonTranslated = new TreeSet();
+                        Set nonTranslated = new TreeSet();
                         Iterator itnt = defs.keySet().iterator();
                         while ( itnt.hasNext() )
                         {
@@ -643,7 +643,7 @@ public class L10NStatusReport
 
         private MavenProject proj;
 
-        private HashMap properties;
+        private Map properties;
 
         static final String DEFAULT_LOCALE = "Default";
 
@@ -671,7 +671,7 @@ public class L10NStatusReport
             return proj;
         }
 
-        public HashMap getProperties()
+        public Map getProperties()
         {
             return properties;
         }
