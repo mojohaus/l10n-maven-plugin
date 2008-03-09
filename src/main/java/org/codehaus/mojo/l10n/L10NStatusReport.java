@@ -93,7 +93,8 @@ public class L10NStatusReport
     /**
      * The list of resources that are scanned for properties bundles.
      *
-     * @parameter default-value="${project.build.resources}"
+     * @parameter default-value="${project.resources}"
+     * @readonly
      */
     private List resources;
 
