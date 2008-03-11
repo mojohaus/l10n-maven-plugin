@@ -20,20 +20,23 @@ under the License.
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <groupId>org.codehaus.mojo</groupId>
-    <artifactId>mojo-sandbox</artifactId>
-    <version>4</version>
+    <artifactId>mojo</artifactId>
+    <version>16</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>l10n-maven-plugin</artifactId>
   <packaging>maven-plugin</packaging>
   <name>Localization Tools Maven Mojo</name>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0-alpha-1-SNAPSHOT</version>
   <description>
-    Allows to do an automated pseudo localization to test the completeness of your project internationalization effort.
-    This technique simulates the process of localizing products by prefixing and suffixing all your I18N-ed messages.
-    For more information on pseudolocalization, see http://developers.sun.com/solaris/articles/i18n/I18N_Testing.html
+    Allows you to do an automated pseudo-localization to test the completeness
+    of your project's internationalization effort. This technique simulates the
+    process of localizing products by prefixing and suffixing all your
+    internationalized messages.
+    For more information on pseudo-localization, see
+    http://developers.sun.com/solaris/articles/i18n/I18N_Testing.html.
     For more general information on localization, see
-    http://java.sun.com/developer/technicalArticles/Intl/ResourceBundles/
+    http://java.sun.com/developer/technicalArticles/Intl/ResourceBundles/.
   </description>
   <prerequisites>
     <maven>2.0.4</maven>
@@ -66,9 +69,9 @@ under the License.
   </licenses>
 
   <scm>
-    <connection>scm:svn:http://svn.codehaus.org/mojo/trunk/sandbox/l10n-maven-plugin/</connection>
-    <developerConnection>scm:svn:https://svn.codehaus.org/mojo/trunk/sandbox/l10n-maven-plugin/</developerConnection>
-    <url>http://svn.codehaus.org/mojo/trunk/sandbox/l10n-maven-plugin/</url>
+    <connection>scm:svn:http://svn.codehaus.org/mojo/trunk/mojo/l10n-maven-plugin/</connection>
+    <developerConnection>scm:svn:https://svn.codehaus.org/mojo/trunk/mojo/l10n-maven-plugin/</developerConnection>
+    <url>http://svn.codehaus.org/mojo/trunk/mojo/l10n-maven-plugin/</url>
   </scm>
 
   <build>
