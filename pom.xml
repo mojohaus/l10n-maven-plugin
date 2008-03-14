@@ -27,7 +27,7 @@ under the License.
   <artifactId>l10n-maven-plugin</artifactId>
   <packaging>maven-plugin</packaging>
   <name>Localization Tools Maven Mojo</name>
-  <version>1.0-alpha-1-SNAPSHOT</version>
+  <version>1.0-alpha-1</version>
   <description>
     Allows you to do an automated pseudo-localization to test the completeness
     of your project's internationalization effort. This technique simulates the
@@ -69,9 +69,9 @@ under the License.
   </licenses>
 
   <scm>
-    <connection>scm:svn:http://svn.codehaus.org/mojo/trunk/mojo/l10n-maven-plugin/</connection>
-    <developerConnection>scm:svn:https://svn.codehaus.org/mojo/trunk/mojo/l10n-maven-plugin/</developerConnection>
-    <url>http://svn.codehaus.org/mojo/trunk/mojo/l10n-maven-plugin/</url>
+    <connection>scm:svn:http://svn.codehaus.org/mojo/tags/l10n-maven-plugin-1.0-alpha-1</connection>
+    <developerConnection>scm:svn:https://svn.codehaus.org/mojo/tags/l10n-maven-plugin-1.0-alpha-1</developerConnection>
+    <url>http://svn.codehaus.org/mojo/tags/l10n-maven-plugin-1.0-alpha-1</url>
   </scm>
 
   <build>
