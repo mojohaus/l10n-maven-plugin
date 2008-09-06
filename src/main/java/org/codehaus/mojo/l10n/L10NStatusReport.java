@@ -28,6 +28,7 @@ import org.apache.maven.reporting.AbstractMavenReportRenderer;
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.StringUtils;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -280,7 +281,7 @@ public class L10NStatusReport
         }
 
         // Write the overview
-        L10NStatusRenderer r = new L10NStatusRenderer( getSink(), getBundle( locale ), included );
+        L10NStatusRenderer r = new L10NStatusRenderer( getSink(), getBundle( locale ), included, locale );
         r.render();
     }
 
@@ -323,16 +324,22 @@ public class L10NStatusReport
 
         private final ResourceBundle bundle;
 
+        /**
+         * The locale in which the report will be rendered.
+         */
+        private final Locale rendererLocale;
+
         private Set files;
 
         private Pattern localedPattern = Pattern.compile( ".*_[a-zA-Z]{2}[_]?[a-zA-Z]{0,2}?\\.properties" );
 
-        public L10NStatusRenderer( Sink sink, ResourceBundle bundle, Set files )
+        public L10NStatusRenderer( Sink sink, ResourceBundle bundle, Set files, Locale rendererLocale )
         {
             super( sink );
 
             this.bundle = bundle;
             this.files = files;
+            this.rendererLocale = rendererLocale;
         }
 
         /**
@@ -364,6 +371,7 @@ public class L10NStatusReport
             String additionalKeysLabel = bundle.getString( "report.l10n.additional" );
             String nontranslatedKeysLabel = bundle.getString( "report.l10n.nontranslated" );
             String[] headers = new String[locales != null ? locales.size() + 2 : 2];
+            Map localeDisplayNames = new HashMap();
             headers[0] = pathColumnName;
             headers[1] = defaultLocaleColumnName;
             if ( locales != null )
@@ -372,8 +380,20 @@ public class L10NStatusReport
                 int ind = 2;
                 while ( it.hasNext() )
                 {
-                    headers[ind] = (String) it.next();
+                    final String localeCode = (String) it.next();
+                    headers[ind] = localeCode;
                     ind = ind + 1;
+
+                    Locale locale = createLocale( localeCode );
+                    if ( locale == null )
+                    {
+                        // If the localeCode were in an unknown format use the localeCode itself as a fallback value
+                        localeDisplayNames.put( localeCode, localeCode );
+                    }
+                    else
+                    {
+                        localeDisplayNames.put( localeCode, locale.getDisplayName( rendererLocale ) );
+                    }
                 }
             }
             tableHeader( headers );
@@ -542,7 +562,7 @@ public class L10NStatusReport
                 {
                     String x = (String) itx.next();
                     getSink().listItem();
-                    link( "#" + x, x );
+                    link( "#" + x, x + " - " + localeDisplayNames.get( x ) );
                     getSink().listItem_();
                 }
                 getSink().list_();
@@ -552,9 +572,9 @@ public class L10NStatusReport
                 {
                     String x = (String) itx.next();
                     getSink().anchor( x );
-                    startSection( x );
+                    startSection( x + " - " + localeDisplayNames.get( x ) );
                     startTable();
-                    tableCaption( bundle.getString( "report.l10n.locale" ) + " " + x );
+                    tableCaption( bundle.getString( "report.l10n.locale" ) + " " + localeDisplayNames.get( x ) );
                     tableHeader( new String[]{ bundle.getString( "report.l10n.tableheader1" ),
                                                bundle.getString( "report.l10n.tableheader2" ),
                                                bundle.getString( "report.l10n.tableheader3" ),
@@ -617,6 +637,32 @@ public class L10NStatusReport
                 }
             }
             endSection();
+        }
+
+        /**
+         * Take the supplied locale code, split into its different parts and create a Locale object from it.
+         *
+         * @param localeCode The code for a locale in the format language[_country[_variant]]
+         * @return A suitable Locale object, ot <code>null</code> if the code was in an unknow format
+         */
+        private Locale createLocale( String localeCode )
+        {
+            // Split the localeCode into language/country/variant
+            String[] localeComponents = StringUtils.split( localeCode, "_" );
+            Locale locale = null;
+            if ( localeComponents.length == 1 )
+            {
+                locale = new Locale( localeComponents[0] );
+            }
+            else if ( localeComponents.length == 2 )
+            {
+                locale = new Locale( localeComponents[0], localeComponents[1] );
+            }
+            else if ( localeComponents.length == 3 )
+            {
+                locale = new Locale( localeComponents[0], localeComponents[1], localeComponents[2] );
+            }
+            return locale;
         }
 
         private String wrapInTable( String okLabel, String cell )
