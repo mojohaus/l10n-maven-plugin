@@ -26,7 +26,7 @@ under the License.
   <modelVersion>4.0.0</modelVersion>
   <artifactId>l10n-maven-plugin</artifactId>
   <packaging>maven-plugin</packaging>
-  <name>Localization Tools Maven Mojo</name>
+  <name>Localization Tools Maven Plugin</name>
   <version>1.0-alpha-2-SNAPSHOT</version>
   <description>
     Allows you to do an automated pseudo-localization to test the completeness
@@ -44,7 +44,7 @@ under the License.
 
   <issueManagement>
     <system>JIRA</system>
-    <url>http://jira.codehaus.org/browse/MOJO</url>
+    <url>http://jira.codehaus.org/browse/MOJO/component/13468</url>
   </issueManagement>
 
   <inceptionYear>2007</inceptionYear>
