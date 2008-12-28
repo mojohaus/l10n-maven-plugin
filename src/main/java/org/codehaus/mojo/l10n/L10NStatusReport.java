@@ -643,7 +643,7 @@ public class L10NStatusReport
          * Take the supplied locale code, split into its different parts and create a Locale object from it.
          *
          * @param localeCode The code for a locale in the format language[_country[_variant]]
-         * @return A suitable Locale object, ot <code>null</code> if the code was in an unknow format
+         * @return A suitable Locale object, ot <code>null</code> if the code was in an unknown format
          */
         private Locale createLocale( String localeCode )
         {
