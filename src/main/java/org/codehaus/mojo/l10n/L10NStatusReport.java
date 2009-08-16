@@ -535,44 +535,45 @@ public class L10NStatusReport
             sink.tableRow_();
 
             endTable();
-            getSink().paragraph();
+            sink.paragraph();
             text( bundle.getString( "report.l10n.legend" ) );
-            getSink().paragraph_();
-            getSink().list();
-            getSink().listItem();
+            sink.paragraph_();
+            sink.list();
+            sink.listItem();
             text( bundle.getString( "report.l10n.list1" ) );
-            getSink().listItem_();
-            getSink().listItem();
+            sink.listItem_();
+            sink.listItem();
             text( bundle.getString( "report.l10n.list2" ) );
-            getSink().listItem_();
-            getSink().listItem();
+            sink.listItem_();
+            sink.listItem();
             text( bundle.getString( "report.l10n.list3" ) );
-            getSink().listItem_();
-            getSink().list_();
-            getSink().paragraph();
+            sink.listItem_();
+            sink.list_();
+            sink.paragraph();
             text( bundle.getString( "report.l10n.note" ) );
-            getSink().paragraph_();
+            sink.paragraph_();
             endSection();
 
             if ( locales != null )
             {
                 Iterator itx = locales.iterator();
-                getSink().list();
+                sink.list();
                 while ( itx.hasNext() )
                 {
                     String x = (String) itx.next();
-                    getSink().listItem();
+                    sink.listItem();
                     link( "#" + x, x + " - " + localeDisplayNames.get( x ) );
-                    getSink().listItem_();
+                    sink.listItem_();
                 }
-                getSink().list_();
+                sink.list_();
 
                 itx = locales.iterator();
                 while ( itx.hasNext() )
                 {
                     String x = (String) itx.next();
-                    getSink().anchor( x );
                     startSection( x + " - " + localeDisplayNames.get( x ) );
+                    sink.anchor( x );
+                    sink.anchor_();
                     startTable();
                     tableCaption( bundle.getString( "report.l10n.locale" ) + " " + localeDisplayNames.get( x ) );
                     tableHeader( new String[]{ bundle.getString( "report.l10n.tableheader1" ),
