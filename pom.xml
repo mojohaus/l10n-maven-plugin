@@ -21,13 +21,13 @@ under the License.
   <parent>
     <groupId>org.codehaus.mojo</groupId>
     <artifactId>mojo-parent</artifactId>
-    <version>18</version>
+    <version>36</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>l10n-maven-plugin</artifactId>
   <packaging>maven-plugin</packaging>
   <name>Localization Tools Maven Plugin</name>
-  <version>1.0-alpha-3-SNAPSHOT</version>
+  <version>1.0-SNAPSHOT</version>
   <description>
     Allows you to do an automated pseudo-localization to test the completeness
     of your project's internationalization effort. This technique simulates the
@@ -38,13 +38,14 @@ under the License.
     For more general information on localization, see
     http://java.sun.com/developer/technicalArticles/Intl/ResourceBundles/.
   </description>
+  <url>http://www.mojohaus.org/l10n-maven-plugin/</url>
   <prerequisites>
     <maven>2.0.4</maven>
   </prerequisites>
 
   <issueManagement>
-    <system>JIRA</system>
-    <url>http://jira.codehaus.org/browse/MOJO/component/13468</url>
+    <system>GitHub</system>
+    <url>https://github.com/mojohaus/l10n-maven-plugin/issues</url>
   </issueManagement>
 
   <inceptionYear>2007</inceptionYear>
@@ -79,14 +80,15 @@ under the License.
   </licenses>
 
   <scm>
-    <connection>scm:svn:http://svn.codehaus.org/mojo/trunk/mojo/l10n-maven-plugin/</connection>
-    <developerConnection>scm:svn:https://svn.codehaus.org/mojo/trunk/mojo/l10n-maven-plugin/</developerConnection>
-    <url>http://svn.codehaus.org/mojo/trunk/mojo/l10n-maven-plugin/</url>
+    <connection>scm:git:https://github.com/mojohaus/l10n-maven-plugin.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/mojohaus/l10n-maven-plugin.git</developerConnection>
+    <url>https://github.com/mojohaus/l10n-maven-plugin/</url>
   </scm>
 
   <properties>
     <doxiaVersion>1.0</doxiaVersion>
     <mavenVersion>2.0.6</mavenVersion>
+    <mojo.java.target>1.5</mojo.java.target>
   </properties>
 
   <dependencies>
@@ -140,26 +142,6 @@ under the License.
 
   <reporting>
     <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-changes-plugin</artifactId>
-        <version>2.1</version>
-        <configuration>
-          <issueLinkTemplate>http://jira.codehaus.org/browse/%ISSUE%</issueLinkTemplate>
-        </configuration>
-        <reportSets>
-          <reportSet>
-            <reports>
-              <report>changes-report</report>
-            </reports>
-          </reportSet>
-        </reportSets>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-project-info-reports-plugin</artifactId>
-        <version>2.0.1</version>
-      </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>l10n-maven-plugin</artifactId>
