@@ -19,12 +19,6 @@ package org.codehaus.mojo.l10n;
  * under the License.
  */
 
-import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.codehaus.plexus.util.DirectoryScanner;
-import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.StringUtils;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -37,58 +31,62 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.codehaus.plexus.util.DirectoryScanner;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.StringUtils;
+
 /**
  * Allows you to do an automated pseudo-localization to test the completeness
  * of your project's internationalization effort. This technique simulates the
  * process of localizing products by prefixing and suffixing all your
  * internationalized messages.
- * <p/>
+ * <p>
  * For more information on pseudo-localization, see
  * <a href="http://developers.sun.com/solaris/articles/i18n/I18N_Testing.html">
  * I18N Testing Guidelines and Techniques</a>.
- * <p/>
+ * <p>
  * For more general information on localization, see
  * <a href="http://java.sun.com/developer/technicalArticles/Intl/ResourceBundles/">
  * Java Internationalization: Localization with ResourceBundles</a>.
  *
  * @author <a href="mailto:mkleint@codehaus.org">Milos Kleint</a>
- * @goal pseudo
- * @phase process-classes
  */
+@Mojo( name = "pseudo", defaultPhase = LifecyclePhase.PROCESS_CLASSES)
 public class PseudoLocalizeMojo
     extends AbstractMojo
 {
 
     /**
      * The output directory into which to copy the resources.
-     *
-     * @parameter default-value="${project.build.outputDirectory}"
      */
+    @Parameter(defaultValue = "${project.build.outputDirectory}")
     private File outputDirectory;
 
     /**
      * The input directory from which we copy the resources.
      * The plugin scans the build output directory by default, in order to have
      * the complete set of resources that end up in the product.
-     *
-     * @parameter default-value="${project.build.outputDirectory}"
      */
+    @Parameter(defaultValue = "${project.build.outputDirectory}")
     private File inputDirectory;
 
     /**
      * The list of resources we want to pseudo-localize. If not specified,
      * the default pattern is <code>**&#47;*.properties</code>.
-     *
-     * @parameter
      */
-    private List includes;
+    @Parameter
+    private List<String> includes;
 
     /**
      * The list of resources we don't want to pseudo-localize. By default, no files are excluded.
-     *
-     * @parameter
      */
-    private List excludes;
+    @Parameter
+    private List<String> excludes;
 
     private static final String[] DEFAULT_INCLUDES = {"**/*.properties"};
 
@@ -100,18 +98,16 @@ public class PseudoLocalizeMojo
      * values using {@link java.text.MessageFormat} with this value as a formatting pattern. The
      * pattern is expected to contain this sequence <code>{0}</code> exactly once with a prefix
      * and/or suffix.
-     *
-     * @parameter default-value="XXX 多少 {0} YYY"
      */
+    @Parameter(defaultValue = "XXX 多少 {0} YYY")
     private String pseudoLocPattern;
 
     /**
      * Locale name that is used for pseudo-localization.
      * The resulting property files will have the following name:
      * <code>&lt;filename&gt;_&lt;pseudoLocale&gt;.properties</code>.
-     *
-     * @parameter default-value="xx"
      */
+    @Parameter(defaultValue = "xx")
     private String pseudoLocale;
 
     public void execute()

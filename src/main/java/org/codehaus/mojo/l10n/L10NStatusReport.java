@@ -19,17 +19,6 @@ package org.codehaus.mojo.l10n;
  * under the License.
  */
 
-import org.apache.maven.doxia.sink.Sink;
-import org.apache.maven.doxia.siterenderer.Renderer;
-import org.apache.maven.model.Resource;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.reporting.AbstractMavenReport;
-import org.apache.maven.reporting.AbstractMavenReportRenderer;
-import org.apache.maven.reporting.MavenReportException;
-import org.codehaus.plexus.util.DirectoryScanner;
-import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.StringUtils;
-
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -49,83 +38,58 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 
+import org.apache.maven.doxia.sink.Sink;
+import org.apache.maven.model.Resource;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.reporting.AbstractMavenReport;
+import org.apache.maven.reporting.AbstractMavenReportRenderer;
+import org.apache.maven.reporting.MavenReportException;
+import org.codehaus.plexus.util.DirectoryScanner;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.StringUtils;
+
 /**
  * A simple report for keeping track of l10n status. It lists all bundle properties
  * files and the number of properties in them. For a configurable list of locales it also
  * tracks the progress of localization.
  *
  * @author <a href="mkleint@codehaus.org">Milos Kleint</a>
- * @goal report
  */
+@Mojo( name = "report" )
 public class L10NStatusReport
     extends AbstractMavenReport
 {
-
-    /**
-     * Report output directory.
-     *
-     * @parameter default-value="${project.build.directory}/generated-site/xdoc"
-     */
-    private File outputDirectory;
-
-    /**
-     * Doxia Site Renderer.
-     *
-     * @component
-     */
-    private Renderer siteRenderer;
-
-    /**
-     * A list of locale strings that are to be watched for l10n status.
-     *
-     * @parameter
-     */
-    private List locales;
-
-    /**
-     * The Maven Project.
-     *
-     * @parameter expression="${project}"
-     * @required
-     * @readonly
-     */
-    private MavenProject project;
-
-    /**
-     * The list of resources that are scanned for properties bundles.
-     *
-     * @parameter default-value="${project.resources}"
-     * @readonly
-     */
-    private List resources;
-
-    /**
-     * A list of exclude patterns to use. By default no files are excluded.
-     *
-     * @parameter
-     */
-    private List excludes;
-
-    /**
-     * A list of include patterns to use. By default all <code>*.properties</code> files are included.
-     *
-     * @parameter
-     */
-    private List includes;
-
     /**
      * The projects in the reactor for aggregation report.
      *
-     * @parameter expression="${reactorProjects}"
-     * @readonly
      */
-    protected List reactorProjects;
+    @Parameter(defaultValue = "${reactorProjects}", readonly = true)
+    protected List<MavenProject> reactorProjects;
+
+    /**
+     * A list of locale strings that are to be watched for l10n status.
+     */
+    @Parameter
+    private List<String> locales;
+
+    /**
+     * A list of exclude patterns to use. By default no files are excluded.
+     */
+    @Parameter
+    private List<String> excludes;
+
+    /**
+     * A list of include patterns to use. By default all <code>*.properties</code> files are included.
+     */
+    @Parameter
+    private List<String> includes;
 
     /**
      * Whether to build an aggregated report at the root, or build individual reports.
-     *
-     * @parameter expression="${maven.l10n.aggregate}" default-value="false"
      */
+    @Parameter(defaultValue = "false", property = "maven.l10n.aggregate")
     protected boolean aggregate;
 
 
@@ -133,49 +97,14 @@ public class L10NStatusReport
 
     private static final String[] EMPTY_STRING_ARRAY = {};
 
-
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#getSiteRenderer()
-     */
-    protected Renderer getSiteRenderer()
-    {
-        return siteRenderer;
-    }
-
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#getOutputDirectory()
-     */
-    protected String getOutputDirectory()
-    {
-        return outputDirectory.getAbsolutePath();
-    }
-
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#getProject()
-     */
-    protected MavenProject getProject()
-    {
-        return project;
-    }
-
     public boolean canGenerateReport()
     {
-        return canGenerateReport( constructResourceDirs() );
-    }
-
-    /**
-     * @param sourceDirs
-     * @return true if the report can be generated
-     */
-    protected boolean canGenerateReport( Map sourceDirs )
-    {
-        boolean canGenerate = !sourceDirs.isEmpty();
-
         if ( aggregate && !project.isExecutionRoot() )
         {
-            canGenerate = false;
+            return false;
         }
-        return canGenerate;
+
+        return !constructResourceDirs().isEmpty();
     }
 
     /**
@@ -193,16 +122,16 @@ public class L10NStatusReport
                 MavenProject prj = (MavenProject) i.next();
                 if ( prj.getResources() != null && !prj.getResources().isEmpty() )
                 {
-                    sourceDirs.put( prj, new ArrayList( prj.getResources() ) );
+                    sourceDirs.put( prj, prj.getResources() );
                 }
 
             }
         }
         else
         {
-            if ( resources != null && !resources.isEmpty() )
+            if ( project.getResources() != null && !project.getResources().isEmpty() )
             {
-                sourceDirs.put( project, new ArrayList( resources ) );
+                sourceDirs.put( project, project.getResources() );
             }
         }
         return sourceDirs;
