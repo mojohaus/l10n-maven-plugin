@@ -86,7 +86,6 @@ under the License.
   </scm>
 
   <properties>
-    <doxiaVersion>1.0</doxiaVersion>
     <mavenVersion>3.2.5</mavenVersion>
     <mojo.java.target>1.8</mojo.java.target>
   </properties>
