@@ -56,6 +56,7 @@ import org.codehaus.plexus.util.StringUtils;
  * tracks the progress of localization.
  *
  * @author <a href="mkleint@codehaus.org">Milos Kleint</a>
+ * @since 1.0.0
  */
 @Mojo( name = "report" )
 public class L10NStatusReport
@@ -64,32 +65,41 @@ public class L10NStatusReport
     /**
      * The projects in the reactor for aggregation report.
      *
+     * @since 1.0.0
      */
-    @Parameter(defaultValue = "${reactorProjects}", readonly = true)
+    @Parameter( defaultValue = "${reactorProjects}", readonly = true )
     protected List<MavenProject> reactorProjects;
 
     /**
      * A list of locale strings that are to be watched for l10n status.
+     *
+     * @since 1.0.0
      */
     @Parameter
     private List<String> locales;
 
     /**
      * A list of exclude patterns to use. By default no files are excluded.
+     *
+     * @since 1.0.0
      */
     @Parameter
     private List<String> excludes;
 
     /**
-     * A list of include patterns to use. By default all <code>*.properties</code> files are included.
+     * A list of include patterns to use. By default, all <code>*.properties</code> files are included.
+     *
+     * @since 1.0.0
      */
     @Parameter
     private List<String> includes;
 
     /**
      * Whether to build an aggregated report at the root, or build individual reports.
+     *
+     * @since 1.0.0
      */
-    @Parameter(defaultValue = "false", property = "maven.l10n.aggregate")
+    @Parameter( defaultValue = "false", property = "maven.l10n.aggregate" )
     protected boolean aggregate;
 
 
@@ -401,7 +411,7 @@ public class L10NStatusReport
                                         if ( missing.size() != 0 )
                                         {
                                             statusRows.append( "<tr><td>" + missingKeysLabel + "</td><td><b>"
-                                                + missing.size() + "</b></td></tr>" );
+                                                                   + missing.size() + "</b></td></tr>" );
                                         }
                                         else
                                         {
@@ -410,7 +420,7 @@ public class L10NStatusReport
                                         if ( additional.size() != 0 )
                                         {
                                             statusRows.append( "<tr><td>" + additionalKeysLabel + "</td><td><b>"
-                                                + additional.size() + "</b></td></tr>" );
+                                                                   + additional.size() + "</b></td></tr>" );
                                         }
                                         else
                                         {
@@ -419,7 +429,7 @@ public class L10NStatusReport
                                         if ( nonTranslated.size() != 0 )
                                         {
                                             statusRows.append( "<tr><td>" + nontranslatedKeysLabel + "</td><td><b>"
-                                                + nonTranslated.size() + "</b></td></tr>" );
+                                                                   + nonTranslated.size() + "</b></td></tr>" );
                                         }
                                         tableCell( wrapInTable( okLabel, statusRows.toString() ), true );
                                     }
@@ -505,10 +515,10 @@ public class L10NStatusReport
                     sink.anchor_();
                     startTable();
                     tableCaption( bundle.getString( "report.l10n.locale" ) + " " + localeDisplayNames.get( x ) );
-                    tableHeader( new String[]{ bundle.getString( "report.l10n.tableheader1" ),
-                                               bundle.getString( "report.l10n.tableheader2" ),
-                                               bundle.getString( "report.l10n.tableheader3" ),
-                                               bundle.getString( "report.l10n.tableheader4" ) } );
+                    tableHeader( new String[] {bundle.getString( "report.l10n.tableheader1" ),
+                        bundle.getString( "report.l10n.tableheader2" ),
+                        bundle.getString( "report.l10n.tableheader3" ),
+                        bundle.getString( "report.l10n.tableheader4" )} );
                     Iterator usedIter = usedFiles.iterator();
                     while ( usedIter.hasNext() )
                     {

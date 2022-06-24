@@ -28,7 +28,7 @@ under the License.
   <artifactId>l10n-maven-plugin</artifactId>
   <packaging>maven-plugin</packaging>
   <name>Localization Tools Maven Plugin</name>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0.0-SNAPSHOT</version>
 
   <description>
     Allows you to do an automated pseudo-localization to test the completeness

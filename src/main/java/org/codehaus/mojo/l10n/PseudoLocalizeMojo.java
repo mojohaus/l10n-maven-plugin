@@ -55,35 +55,44 @@ import org.codehaus.plexus.util.StringUtils;
  * Java Internationalization: Localization with ResourceBundles</a>.
  *
  * @author <a href="mailto:mkleint@codehaus.org">Milos Kleint</a>
+ * @since 1.0.0
  */
-@Mojo( name = "pseudo", defaultPhase = LifecyclePhase.PROCESS_CLASSES)
+@Mojo( name = "pseudo", defaultPhase = LifecyclePhase.PROCESS_CLASSES )
 public class PseudoLocalizeMojo
     extends AbstractMojo
 {
 
     /**
      * The output directory into which to copy the resources.
+     *
+     * @since 1.0.0
      */
-    @Parameter(defaultValue = "${project.build.outputDirectory}")
+    @Parameter( defaultValue = "${project.build.outputDirectory}" )
     private File outputDirectory;
 
     /**
      * The input directory from which we copy the resources.
      * The plugin scans the build output directory by default, in order to have
      * the complete set of resources that end up in the product.
+     *
+     * @since 1.0.0
      */
-    @Parameter(defaultValue = "${project.build.outputDirectory}")
+    @Parameter( defaultValue = "${project.build.outputDirectory}" )
     private File inputDirectory;
 
     /**
      * The list of resources we want to pseudo-localize. If not specified,
      * the default pattern is <code>**&#47;*.properties</code>.
+     *
+     * @since 1.0.0
      */
     @Parameter
     private List<String> includes;
 
     /**
      * The list of resources we don't want to pseudo-localize. By default, no files are excluded.
+     *
+     * @since 1.0.0
      */
     @Parameter
     private List<String> excludes;
@@ -98,16 +107,20 @@ public class PseudoLocalizeMojo
      * values using {@link java.text.MessageFormat} with this value as a formatting pattern. The
      * pattern is expected to contain this sequence <code>{0}</code> exactly once with a prefix
      * and/or suffix.
+     *
+     * @since 1.0.0
      */
-    @Parameter(defaultValue = "XXX 多少 {0} YYY")
+    @Parameter( defaultValue = "XXX 多少 {0} YYY" )
     private String pseudoLocPattern;
 
     /**
      * Locale name that is used for pseudo-localization.
      * The resulting property files will have the following name:
      * <code>&lt;filename&gt;_&lt;pseudoLocale&gt;.properties</code>.
+     *
+     * @since 1.0.0
      */
-    @Parameter(defaultValue = "xx")
+    @Parameter( defaultValue = "xx" )
     private String pseudoLocale;
 
     public void execute()
@@ -214,7 +227,7 @@ public class PseudoLocalizeMojo
             {
                 String key = (String) it.next();
                 String val = props.getProperty( key );
-                String newVal = MessageFormat.format( pseudoLocPattern, new String[]{val} );
+                String newVal = MessageFormat.format( pseudoLocPattern, new String[] {val} );
                 props.setProperty( key, newVal );
             }
             out = new BufferedOutputStream( new FileOutputStream( to ) );
