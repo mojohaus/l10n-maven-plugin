@@ -4,7 +4,7 @@
  Milos Kleint
  <mkleint@codehaus.org>
  ------
- August 26, 2007
+ 2007-08-26
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -37,13 +37,13 @@ Localization Tools Maven Plugin
 
    The Localization Tools Maven Plugin has two goals:
 
-   * {{{pseudo-mojo.html} l10n:pseudo}} performs an automated pseudo-localization of
+   * {{{./pseudo-mojo.html} l10n:pseudo}} performs an automated pseudo-localization of
      all the property resources in the project. That lets you verify the completeness of 
      your internationalization effort.
 
-   * {{{report-mojo.html} l10n:report}} tracks the completeness of your localization 
+   * {{{./report-mojo.html} l10n:report}} tracks the completeness of your localization
      for specified locales and displays the results in tabular form.
 
 * Usage
 
-  Instructions on how to use the Localization Tools Maven Plugin can be found on the {{{usage.html}usage page}}.
+  Instructions on how to use the Localization Tools Maven Plugin can be found on the {{{./usage.html}usage page}}.
