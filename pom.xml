@@ -88,6 +88,7 @@ under the License.
   <properties>
     <mavenVersion>3.2.5</mavenVersion>
     <mojo.java.target>1.8</mojo.java.target>
+    <project.build.outputTimestamp>2022-06-25T18:36:44Z</project.build.outputTimestamp>
   </properties>
 
   <dependencyManagement>
