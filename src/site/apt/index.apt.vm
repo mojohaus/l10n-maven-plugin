@@ -33,17 +33,46 @@ Localization Tools Maven Plugin
  The Localization Tools Maven Plugin helps with internationalization and
  localization of your projects.
 
-* Goals Overview
+* Generate the Report
 
-   The Localization Tools Maven Plugin has two goals:
+  To generate the localization report, just add the following in your project's
+  <<<pom.xml>>>:
 
-   * {{{./pseudo-mojo.html} l10n:pseudo}} performs an automated pseudo-localization of
-     all the property resources in the project. That lets you verify the completeness of 
-     your internationalization effort.
+-------------------
+<project>
+  ...
+  <build>
+    ...
+  </build>
+  ...
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>l10n-maven-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          <locales>
+            <locale>de</locale>
+            <locale>es</locale>
+            <locale>fr</locale>
+            ...
+          </locales>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
+  ...
+</project>
+-------------------
 
-   * {{{./report-mojo.html} l10n:report}} tracks the completeness of your localization
-     for specified locales and displays the results in tabular form.
+  Add a <<<\<locale\>>>> element for every localization you have.
 
-* Usage
+  The report will be generated when you execute the Maven site plugin, like this:
 
-  Instructions on how to use the Localization Tools Maven Plugin can be found on the {{{./usage.html}usage page}}.
+-------------------
+mvn site
+-------------------
+
+  You can refer to the {{{./report-mojo.html}generated documentation}} to discover
+  the different configuration options for the report mojo.

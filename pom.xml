@@ -31,14 +31,7 @@ under the License.
   <version>1.0.0-SNAPSHOT</version>
 
   <description>
-    Allows you to do an automated pseudo-localization to test the completeness
-    of your project's internationalization effort. This technique simulates the
-    process of localizing products by prefixing and suffixing all your
-    internationalized messages.
-    For more information on pseudo-localization, see
-    http://developers.sun.com/solaris/articles/i18n/I18N_Testing.html.
-    For more general information on localization, see
-    http://java.sun.com/developer/technicalArticles/Intl/ResourceBundles/.
+    The Localization Tools Maven Plugin helps with internationalization and localization of your projects.
   </description>
 
   <url>https://www.mojohaus.org/l10n-maven-plugin/</url>
