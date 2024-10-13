@@ -78,7 +78,7 @@ under the License.
   </scm>
 
   <properties>
-    <mavenVersion>3.5.4</mavenVersion>
+    <mavenVersion>3.6.3</mavenVersion>
     <mojo.java.target>8</mojo.java.target>
     <project.build.outputTimestamp>2022-06-28T20:40:23Z</project.build.outputTimestamp>
   </properties>
