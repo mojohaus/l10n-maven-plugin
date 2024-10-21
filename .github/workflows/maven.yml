@@ -23,3 +23,6 @@ jobs:
   build:
     name: Verify
     uses: apache/maven-gh-actions-shared/.github/workflows/maven-verify.yml@v4
+    with:
+      ff-goal: 'install'         # site use project version for reporting
+      verify-goal: 'install'     # should be the same as for first build
