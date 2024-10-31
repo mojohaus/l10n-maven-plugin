@@ -1,0 +1,1 @@
+typeSearchIndex = [{"l":"All Classes and Interfaces","u":"allclasses-index.html"},{"p":"org.codehaus.mojo.l10n_maven_plugin","l":"HelpMojo"},{"p":"org.codehaus.mojo.l10n","l":"L10NStatusReport"}];updateSearchResults();
