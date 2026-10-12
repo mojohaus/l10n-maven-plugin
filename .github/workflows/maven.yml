@@ -34,5 +34,5 @@ jobs:
           {"os": "macos-latest", "jdk": "21"},
           {"os": "windows-latest", "jdk": "21"}
         ]
-      ff-goal: 'install'         # site use project version for reporting
-      verify-goal: 'install'     # should be the same as for first build
+      ff-goal: '-P run-its install'         # site use project version for reporting
+      verify-goal: '-P run-its install'     # should be the same as for first build
