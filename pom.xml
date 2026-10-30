@@ -80,7 +80,6 @@ under the License.
   <properties>
     <mavenVersion>3.9.16</mavenVersion>
     <minimalMavenBuildVersion>3.9.0</minimalMavenBuildVersion>
-    <mojo.java.target>8</mojo.java.target>
     <project.build.outputTimestamp>2026-09-11T20:57:36Z</project.build.outputTimestamp>
   </properties>
 
