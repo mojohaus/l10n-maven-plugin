@@ -9,8 +9,13 @@ updates:
         patterns: ["*"]
         update-types: ["minor", "patch"]
     ignore:
-      # Ignore Maven Core updates
-      - dependency-name: "org.apache.maven:*"
+      # Stay on the Maven 3.9.x line
+      - dependency-name: "org.apache.maven:maven-core"
+        versions: [">= 3.10.0"]
+      - dependency-name: "org.apache.maven:maven-model"
+        versions: [">= 3.10.0"]
+      - dependency-name: "org.apache.maven:maven-plugin-api"
+        versions: [">= 3.10.0"]
   
   - package-ecosystem: github-actions
     directory: "/"
