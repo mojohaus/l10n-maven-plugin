@@ -239,6 +239,7 @@ public class L10NStatusReport extends AbstractMavenReport {
         /**
          * @see org.apache.maven.reporting.MavenReportRenderer#getTitle()
          */
+        @Override
         public String getTitle() {
             return bundle.getString("report.l10n.title");
         }
@@ -547,6 +548,7 @@ public class L10NStatusReport extends AbstractMavenReport {
 
     private static class WrapperComparator implements Comparator<Wrapper> {
 
+        @Override
         public int compare(Wrapper wr1, Wrapper wr2) {
             int comp1 = wr1.getProject().getBasedir().compareTo(wr2.getProject().getBasedir());
             if (comp1 != 0) {
