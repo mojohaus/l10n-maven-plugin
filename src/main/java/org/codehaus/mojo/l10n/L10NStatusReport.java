@@ -308,7 +308,7 @@ public class L10NStatusReport extends AbstractMavenReport {
                             Files.newInputStream(wr.getFile().toPath()))) {
                         props.load(in);
                         wr.getProperties().put(Wrapper.DEFAULT_LOCALE, props);
-                        tableCell("" + props.size(), true);
+                        tableCell(String.valueOf(props.size()), true);
                         count[0] = count[0] + props.size();
                         if (locales != null) {
                             int i = 1;
