@@ -11,7 +11,7 @@ bundle has. The `aggregate` parameter builds one report at the root of a multi-m
 
 - The report's own texts are in `src/main/resources/l10n-status-report*.properties` (default,
   `en`, `de`).
-- The site is built from `src/site/apt`; `.apt.vm` files go through Velocity.
+- The site is built from `src/site/markdown`; `.md.vm` files go through Velocity.
 
 ## Build gates
 
@@ -52,14 +52,16 @@ bundle has. The `aggregate` parameter builds one report at the root of a multi-m
 
 ## Continuous integration
 
-- `.github/workflows/maven.yml` calls the shared `maven-verify.yml@v5` workflow from
-  `apache/maven-gh-actions-shared`, with `install` as the build goal. The workflow passes no
-  `-P run-its`, so the integration tests are not part of that goal; run them locally as above.
+- `.github/workflows/maven.yml` calls the MojoHaus `maven-verify.yml` reusable workflow in
+  `mojohaus/.github`, which sets the JDK and OS matrix and runs Maven 3 and Maven 4. Its default
+  build goal activates `run-its`, so the integration tests run in CI; run them locally as above.
 - Branches pushed to this repository build under the `push` event.
 
 ## Dependencies
 
-- Dependabot ignores every `org.apache.maven:*` artifact, so Maven core stays on `mavenVersion`.
+- Dependabot ignores four named artifacts, not all of `org.apache.maven:*`: `maven-core`,
+  `maven-model` and `maven-plugin-api` stay below 3.10 and `maven-reporting-api` below 4.1, so
+  Maven core stays on `mavenVersion` and the site plugin keeps reporting-api 4.0.0.
 - `dependencyManagement` overrides `commons-io` and `plexus-archiver` for security fixes in
   transitive dependencies.
 
