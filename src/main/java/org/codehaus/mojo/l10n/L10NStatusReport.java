@@ -369,7 +369,6 @@ public class L10NStatusReport extends AbstractMavenReport {
                                     }
                                 } else {
                                     tableCell(missingFileLabel);
-                                    count[i] += 0;
                                 }
                                 i = i + 1;
                             }
