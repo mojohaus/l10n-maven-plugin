@@ -60,7 +60,9 @@ import org.codehaus.plexus.util.StringUtils;
 public class L10NStatusReport extends AbstractMavenReport {
 
     /**
-     * A list of locale strings that are to be watched for l10n status.
+     * A list of locale strings that are to be watched for l10n status, for example <code>de</code> or
+     * <code>pt_BR</code>. For each one, the report looks for <code>&lt;bundle&gt;_&lt;locale&gt;.properties</code> next
+     * to the default bundle and compares the keys.
      *
      * @since 1.0.0
      */
@@ -68,7 +70,8 @@ public class L10NStatusReport extends AbstractMavenReport {
     private List<String> locales;
 
     /**
-     * A list of exclude patterns to use. By default no files are excluded.
+     * A list of exclude patterns to use, relative to the resource directory. By default no files are excluded. If a
+     * resource of the project defines its own excludes, those are used instead of this list.
      *
      * @since 1.0.0
      */
@@ -76,7 +79,8 @@ public class L10NStatusReport extends AbstractMavenReport {
     private List<String> excludes;
 
     /**
-     * A list of include patterns to use. By default, all <code>*.properties</code> files are included.
+     * A list of include patterns to use, relative to the resource directory, added to the includes of the project
+     * resources. By default, all <code>*.properties</code> files are included.
      *
      * @since 1.0.0
      */
@@ -84,7 +88,8 @@ public class L10NStatusReport extends AbstractMavenReport {
     private List<String> includes;
 
     /**
-     * Whether to build an aggregated report at the root, or build individual reports.
+     * Whether to build one report for all modules at the root of the build, or an individual report for each module.
+     * The aggregated report is only generated in the execution root.
      *
      * @since 1.0.0
      */

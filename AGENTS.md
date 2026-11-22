@@ -11,7 +11,7 @@ bundle has. The `aggregate` parameter builds one report at the root of a multi-m
 
 - The report's own texts are in `src/main/resources/l10n-status-report*.properties` (default,
   `en`, `de`).
-- The site is built from `src/site/markdown`; `.md.vm` files go through Velocity.
+- The site is built from `src/site/markdown`.
 
 ## Build gates
 
@@ -19,7 +19,7 @@ bundle has. The `aggregate` parameter builds one report at the root of a multi-m
   before committing. It formats Java with palantir-java-format, sorts the POM, and also reformats
   Markdown, including this file and the README.
 - The build compiles with `mojo.java.target` 8.
-- The plugin compiles against `mavenVersion` (3.9.16) and declares a literal Maven 3.9.0 as its
+- The plugin compiles against `mavenVersion` and declares a literal Maven 3.9.0 as its
   `<prerequisites>`; `minimalMavenBuildVersion` holds the build to the same floor. Raising
   `mavenVersion` must not raise the prerequisite.
 - Fields of `L10NStatusReport` are plugin parameters; renaming one changes the plugin's
@@ -65,9 +65,27 @@ bundle has. The `aggregate` parameter builds one report at the root of a multi-m
 - `dependencyManagement` overrides `commons-io` and `plexus-archiver` for security fixes in
   transitive dependencies.
 
+## Documentation updates
+
+A change that users or contributors can notice ships with the documentation it affects, in the same pull
+request. A refactor with no visible effect needs none.
+
+- A new or changed parameter or default of the report: the Javadoc of the field in `L10NStatusReport`, which
+  becomes the goal page, and the matching section of `src/site/markdown/index.md` (Reading the Report, Choosing
+  the Bundles, Aggregate Report).
+- The page is plain Markdown. Its first plugin declaration carries the version as
+  `<version><!-- latest release --></version>`, so no example goes stale.
+- A page added, removed or renamed: the menu in `src/site/site.xml`. Never rename a published page; its URL is
+  linked from elsewhere.
+- The Maven or Java requirement, or how to build and release: `README.md`, and the Requirements section of
+  `src/site/markdown/index.md`.
+- A new convention, build gate or test fixture: this file.
+
+Check the result with `mvn site` and open `target/site/index.html`.
+
 ## Pull requests
 
 - Squash and rebase merges are enabled; merge commits are not. Release Drafter, through the shared
-  `apache/maven-gh-actions-shared` workflow, builds the release notes from pull request titles
+  release-drafter workflow, builds the release notes from pull request titles
   and labels, so the title should describe the change for a user.
 
